@@ -1,34 +1,22 @@
-# Environment Manifests
+# 环境清单
 
-`requirements.txt` is the portable pip input for moving the current CPU modeling
-and analysis workflow to another machine. It covers the mainline RF route,
-hardware trend/cost experiments, and report post-processing.
+`requirements.txt` 是当前 CPU 建模和分析流程迁移到其他机器时使用的可移植 pip 依赖输入，覆盖主线 RF route、硬件趋势/成本实验以及报告后处理。
 
-`environment.yml` and `conda_list.txt` are retained as local environment audit
-references. They are not required if the target machine already has a suitable
-Python environment. `pip_freeze.txt` intentionally does not contain the old
-machine-local local wheel paths.
+`environment.yml` 和 `conda_list.txt` 保留为本地环境审计参考。如果目标机器已经有合适的 Python 环境，它们不是必需输入。`pip_freeze.txt` 特意不包含旧机器上的本地 wheel 路径。
 
-This directory does not contain the binary conda environment. On the target
-machine, activate the desired environment if needed and install the portable
-requirements with the current shell's `python`:
+本目录不包含二进制 conda 环境。迁移到目标机器时，可以先激活需要使用的环境，再用当前 shell 的 `python` 安装可移植依赖：
 
 ```bash
-conda activate ort  # optional
+conda activate ort  # 可选
 python --version
 python -m pip install -r env/requirements.txt
 python env/check_env.py
 ```
 
-PyTorch is intentionally not part of the default portable requirements because
-the correct wheel depends on CPU architecture and accelerator runtime. Install a
-platform-compatible PyTorch before running DLRM ONNX/data generation or legacy
-MLP baselines, then verify it with:
+PyTorch 没有放进默认可移植依赖，因为正确 wheel 取决于 CPU 架构和加速器运行时。在运行 DLRM ONNX/数据生成或历史 MLP baseline 之前，需要先安装与平台匹配的 PyTorch，然后执行：
 
 ```bash
 python env/check_env.py --include-data-generation
 ```
 
-Vendor NPU runtime packages such as `torch-npu` or `onnxruntime-cann` are not
-part of the default portable requirements. Install them separately only when
-real accelerator execution is required.
+厂商 NPU 运行时包，例如 `torch-npu` 或 `onnxruntime-cann`，也不属于默认可移植依赖。只有需要真实加速器执行时，才需要单独安装这些包。
