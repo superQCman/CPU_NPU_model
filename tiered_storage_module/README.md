@@ -1,6 +1,5 @@
 # DLRM 分级存储模块
 
-本目录来自原始 `分级存储模块.zip`，已整理为英文目录名 `tiered_storage_module/`，并移除压缩包内嵌的 `.git/` 元数据。模块用于 DLRM embedding 分级存储实验和访问模式分析。
 
 ## 目录结构
 
@@ -52,15 +51,3 @@ python reuse_distance.py \
 
 完整参数和输出日志格式见 `docs_delivery/USER_GUIDE.md`。
 
-## 与端到端模型的关系
-
-当前 `cpu_npu_e2e/` 已接入 CPU 模型、NPU 算子模型和 All-to-All 通信模型。分级存储模块暂未直接接入端到端 latency 路径，原因是它目前交付的是运行时实现和离线访问模式分析工具，不是稳定的 latency model artifact。
-
-后续可行的融合路径是新增一个可选 storage adapter：
-
-1. 用 `reuse_distance.py` 或真实 trace 得到 HBM/DRAM/SSD 命中率。
-2. 配置 HBM、DRAM、SSD 到计算设备的数据搬运时延或带宽参数。
-3. 将 embedding/Gather 分支的存储访问代价合成为可预测 latency。
-4. 再把该 latency 注入 `cpu_npu_e2e` 的 embedding/NPU 分支调度。
-
-在上述输入 schema 稳定前，本模块作为独立实验和未来扩展候选保留。

@@ -38,15 +38,6 @@ python -m cpu_npu_e2e.run_fused_e2e \
 - `fused_node_predictions.csv` 中 CPU 路由行使用正式 CPU bundle 预测来源。
 - `routing_coverage.csv`、`alltoall_region_predictions.csv`、`fused_e2e_combo_metrics.csv` 均正常生成。
 
-## 分级存储模块说明
-
-`tiered_storage_module/` 已从原始 `分级存储模块.zip` 解压并改为英文目录名。该模块当前不是可直接接入 `cpu_npu_e2e` 的 latency artifact，而是运行时存储层实现和访问模式分析工具：
-
-- `dlrm_msprof_mtrain.py`：HBM -> DRAM -> SSD 三级存储 embedding 实现。
-- `two_cache.py`：DRAM -> SSD 两级存储 embedding 实现。
-- `reuse_distance.py`：根据 embedding 访问序列估计 HBM/DRAM/SSD 层级分布和命中率。
-
-因此本轮没有把它强行并入端到端 latency 路径。后续如果要融合，建议先把 reuse-distance 输出、cache ratio、HBM/DRAM/SSD 访问代价整理成稳定参数表，再作为 embedding/Gather 分支的可选存储 adapter 接入 `cpu_npu_e2e`。
 
 ## 主要文档
 
@@ -58,18 +49,3 @@ python -m cpu_npu_e2e.run_fused_e2e \
 | `tiered_storage_module/README.md` | 分级存储模块的中文入口和融合边界说明。 |
 | `alltoall_modeling/README.md` | All-to-All 建模模块的中文入口。 |
 
-## 大文件说明
-
-GitHub 普通 Git 不接受超过 100 MB 的 blob。以下本地原始 NPU 模型 artifact 不提交：
-
-```text
-npu_modeling/results/physical_memory_models.joblib
-```
-
-仓库提交压缩后的等价文件：
-
-```text
-npu_modeling/results/physical_memory_models.joblib.gz
-```
-
-`cpu_npu_e2e` 支持自动加载未压缩或压缩版本。
