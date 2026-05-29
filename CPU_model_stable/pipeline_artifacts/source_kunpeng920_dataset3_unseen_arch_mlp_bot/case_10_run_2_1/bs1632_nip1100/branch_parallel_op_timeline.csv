@@ -1,0 +1,256 @@
+batch_idx,task_name,op_name,node_name,provider,lane,start_us,end_us,dur_us,label
+0,bottom,FusedGemm,fused /bot_l/bot_l.0/Gemm_kernel_time,CPUExecutionProvider,0,13069698962381,13069699011876,49495,bottom:FusedGemm
+0,bottom,FusedGemm,fused /bot_l/bot_l.2/Gemm_kernel_time,CPUExecutionProvider,0,13069699011908,13069699037135,25227,bottom:FusedGemm
+1,bottom,FusedGemm,fused /bot_l/bot_l.0/Gemm_kernel_time,CPUExecutionProvider,0,13069708786768,13069708836028,49260,bottom:FusedGemm
+1,bottom,FusedGemm,fused /bot_l/bot_l.2/Gemm_kernel_time,CPUExecutionProvider,0,13069708836047,13069708860096,24049,bottom:FusedGemm
+2,bottom,FusedGemm,fused /bot_l/bot_l.0/Gemm_kernel_time,CPUExecutionProvider,0,13069717491733,13069717541492,49759,bottom:FusedGemm
+2,bottom,FusedGemm,fused /bot_l/bot_l.2/Gemm_kernel_time,CPUExecutionProvider,0,13069717541511,13069717566169,24658,bottom:FusedGemm
+3,bottom,FusedGemm,fused /bot_l/bot_l.0/Gemm_kernel_time,CPUExecutionProvider,0,13069725495188,13069725543195,48007,bottom:FusedGemm
+3,bottom,FusedGemm,fused /bot_l/bot_l.2/Gemm_kernel_time,CPUExecutionProvider,0,13069725543210,13069725567491,24281,bottom:FusedGemm
+4,bottom,FusedGemm,fused /bot_l/bot_l.0/Gemm_kernel_time,CPUExecutionProvider,0,13069733852636,13069733900591,47955,bottom:FusedGemm
+4,bottom,FusedGemm,fused /bot_l/bot_l.2/Gemm_kernel_time,CPUExecutionProvider,0,13069733900610,13069733924896,24286,bottom:FusedGemm
+0,emb_l0,Gather,/emb_l0/Gather_kernel_time,CPUExecutionProvider,1,13069699037398,13069699749432,712034,emb_l0:Gather
+0,emb_l0,Reshape,/emb_l0/Reshape_kernel_time,CPUExecutionProvider,1,13069699749483,13069699749507,24,emb_l0:Reshape
+0,emb_l0,ReduceSum,/emb_l0/ReduceSum_kernel_time,CPUExecutionProvider,1,13069699749514,13069700230509,480995,emb_l0:ReduceSum
+1,emb_l0,Gather,/emb_l0/Gather_kernel_time,CPUExecutionProvider,1,13069708860356,13069709323844,463488,emb_l0:Gather
+1,emb_l0,Reshape,/emb_l0/Reshape_kernel_time,CPUExecutionProvider,1,13069709323864,13069709323887,23,emb_l0:Reshape
+1,emb_l0,ReduceSum,/emb_l0/ReduceSum_kernel_time,CPUExecutionProvider,1,13069709323945,13069709778983,455038,emb_l0:ReduceSum
+2,emb_l0,Gather,/emb_l0/Gather_kernel_time,CPUExecutionProvider,1,13069717566433,13069718040513,474080,emb_l0:Gather
+2,emb_l0,Reshape,/emb_l0/Reshape_kernel_time,CPUExecutionProvider,1,13069718040532,13069718040557,25,emb_l0:Reshape
+2,emb_l0,ReduceSum,/emb_l0/ReduceSum_kernel_time,CPUExecutionProvider,1,13069718040564,13069718444518,403954,emb_l0:ReduceSum
+3,emb_l0,Gather,/emb_l0/Gather_kernel_time,CPUExecutionProvider,1,13069725567785,13069726035831,468046,emb_l0:Gather
+3,emb_l0,Reshape,/emb_l0/Reshape_kernel_time,CPUExecutionProvider,1,13069726035852,13069726035876,24,emb_l0:Reshape
+3,emb_l0,ReduceSum,/emb_l0/ReduceSum_kernel_time,CPUExecutionProvider,1,13069726035883,13069726427782,391899,emb_l0:ReduceSum
+4,emb_l0,Gather,/emb_l0/Gather_kernel_time,CPUExecutionProvider,1,13069733925144,13069734588305,663161,emb_l0:Gather
+4,emb_l0,Reshape,/emb_l0/Reshape_kernel_time,CPUExecutionProvider,1,13069734588327,13069734588350,23,emb_l0:Reshape
+4,emb_l0,ReduceSum,/emb_l0/ReduceSum_kernel_time,CPUExecutionProvider,1,13069734588357,13069734989355,400998,emb_l0:ReduceSum
+0,emb_l1,Gather,/emb_l1/Gather_kernel_time,CPUExecutionProvider,2,13069700230736,13069700852069,621333,emb_l1:Gather
+0,emb_l1,Reshape,/emb_l1/Reshape_kernel_time,CPUExecutionProvider,2,13069700852090,13069700852114,24,emb_l1:Reshape
+0,emb_l1,ReduceSum,/emb_l1/ReduceSum_kernel_time,CPUExecutionProvider,2,13069700852121,13069701245751,393630,emb_l1:ReduceSum
+1,emb_l1,Gather,/emb_l1/Gather_kernel_time,CPUExecutionProvider,2,13069709779740,13069710358395,578655,emb_l1:Gather
+1,emb_l1,Reshape,/emb_l1/Reshape_kernel_time,CPUExecutionProvider,2,13069710358416,13069710358440,24,emb_l1:Reshape
+1,emb_l1,ReduceSum,/emb_l1/ReduceSum_kernel_time,CPUExecutionProvider,2,13069710358450,13069710753473,395023,emb_l1:ReduceSum
+2,emb_l1,Gather,/emb_l1/Gather_kernel_time,CPUExecutionProvider,2,13069718444758,13069718910451,465693,emb_l1:Gather
+2,emb_l1,Reshape,/emb_l1/Reshape_kernel_time,CPUExecutionProvider,2,13069718910469,13069718910494,25,emb_l1:Reshape
+2,emb_l1,ReduceSum,/emb_l1/ReduceSum_kernel_time,CPUExecutionProvider,2,13069718910501,13069719432786,522285,emb_l1:ReduceSum
+3,emb_l1,Gather,/emb_l1/Gather_kernel_time,CPUExecutionProvider,2,13069726428029,13069726906483,478454,emb_l1:Gather
+3,emb_l1,Reshape,/emb_l1/Reshape_kernel_time,CPUExecutionProvider,2,13069726906503,13069726906526,23,emb_l1:Reshape
+3,emb_l1,ReduceSum,/emb_l1/ReduceSum_kernel_time,CPUExecutionProvider,2,13069726906532,13069727416634,510102,emb_l1:ReduceSum
+4,emb_l1,Gather,/emb_l1/Gather_kernel_time,CPUExecutionProvider,2,13069734989566,13069735514553,524987,emb_l1:Gather
+4,emb_l1,Reshape,/emb_l1/Reshape_kernel_time,CPUExecutionProvider,2,13069735514573,13069735514597,24,emb_l1:Reshape
+4,emb_l1,ReduceSum,/emb_l1/ReduceSum_kernel_time,CPUExecutionProvider,2,13069735514603,13069736028736,514133,emb_l1:ReduceSum
+0,emb_l2,Gather,/emb_l2/Gather_kernel_time,CPUExecutionProvider,3,13069701246000,13069701867094,621094,emb_l2:Gather
+0,emb_l2,Reshape,/emb_l2/Reshape_kernel_time,CPUExecutionProvider,3,13069701867115,13069701867138,23,emb_l2:Reshape
+0,emb_l2,ReduceSum,/emb_l2/ReduceSum_kernel_time,CPUExecutionProvider,3,13069701867144,13069702375239,508095,emb_l2:ReduceSum
+1,emb_l2,Gather,/emb_l2/Gather_kernel_time,CPUExecutionProvider,3,13069710754393,13069711210096,455703,emb_l2:Gather
+1,emb_l2,Reshape,/emb_l2/Reshape_kernel_time,CPUExecutionProvider,3,13069711210117,13069711210141,24,emb_l2:Reshape
+1,emb_l2,ReduceSum,/emb_l2/ReduceSum_kernel_time,CPUExecutionProvider,3,13069711210148,13069711599311,389163,emb_l2:ReduceSum
+2,emb_l2,Gather,/emb_l2/Gather_kernel_time,CPUExecutionProvider,3,13069719433033,13069719901294,468261,emb_l2:Gather
+2,emb_l2,Reshape,/emb_l2/Reshape_kernel_time,CPUExecutionProvider,3,13069719901316,13069719901340,24,emb_l2:Reshape
+2,emb_l2,ReduceSum,/emb_l2/ReduceSum_kernel_time,CPUExecutionProvider,3,13069719901346,13069720296142,394796,emb_l2:ReduceSum
+3,emb_l2,Gather,/emb_l2/Gather_kernel_time,CPUExecutionProvider,3,13069727416882,13069727877223,460341,emb_l2:Gather
+3,emb_l2,Reshape,/emb_l2/Reshape_kernel_time,CPUExecutionProvider,3,13069727877242,13069727877265,23,emb_l2:Reshape
+3,emb_l2,ReduceSum,/emb_l2/ReduceSum_kernel_time,CPUExecutionProvider,3,13069727877271,13069728275990,398719,emb_l2:ReduceSum
+4,emb_l2,Gather,/emb_l2/Gather_kernel_time,CPUExecutionProvider,3,13069736028981,13069736488415,459434,emb_l2:Gather
+4,emb_l2,Reshape,/emb_l2/Reshape_kernel_time,CPUExecutionProvider,3,13069736488433,13069736488457,24,emb_l2:Reshape
+4,emb_l2,ReduceSum,/emb_l2/ReduceSum_kernel_time,CPUExecutionProvider,3,13069736488463,13069736880312,391849,emb_l2:ReduceSum
+0,emb_l3,Gather,/emb_l3/Gather_kernel_time,CPUExecutionProvider,4,13069702375756,13069703077521,701765,emb_l3:Gather
+0,emb_l3,Reshape,/emb_l3/Reshape_kernel_time,CPUExecutionProvider,4,13069703077543,13069703077566,23,emb_l3:Reshape
+0,emb_l3,ReduceSum,/emb_l3/ReduceSum_kernel_time,CPUExecutionProvider,4,13069703077572,13069703471369,393797,emb_l3:ReduceSum
+1,emb_l3,Gather,/emb_l3/Gather_kernel_time,CPUExecutionProvider,4,13069711599561,13069712057635,458074,emb_l3:Gather
+1,emb_l3,Reshape,/emb_l3/Reshape_kernel_time,CPUExecutionProvider,4,13069712057656,13069712057680,24,emb_l3:Reshape
+1,emb_l3,ReduceSum,/emb_l3/ReduceSum_kernel_time,CPUExecutionProvider,4,13069712057688,13069712634968,577280,emb_l3:ReduceSum
+2,emb_l3,Gather,/emb_l3/Gather_kernel_time,CPUExecutionProvider,4,13069720296384,13069720764781,468397,emb_l3:Gather
+2,emb_l3,Reshape,/emb_l3/Reshape_kernel_time,CPUExecutionProvider,4,13069720764801,13069720764825,24,emb_l3:Reshape
+2,emb_l3,ReduceSum,/emb_l3/ReduceSum_kernel_time,CPUExecutionProvider,4,13069720764831,13069721164502,399671,emb_l3:ReduceSum
+3,emb_l3,Gather,/emb_l3/Gather_kernel_time,CPUExecutionProvider,4,13069728276231,13069728741351,465120,emb_l3:Gather
+3,emb_l3,Reshape,/emb_l3/Reshape_kernel_time,CPUExecutionProvider,4,13069728741371,13069728741394,23,emb_l3:Reshape
+3,emb_l3,ReduceSum,/emb_l3/ReduceSum_kernel_time,CPUExecutionProvider,4,13069728741401,13069729138040,396639,emb_l3:ReduceSum
+4,emb_l3,Gather,/emb_l3/Gather_kernel_time,CPUExecutionProvider,4,13069736880552,13069737547694,667142,emb_l3:Gather
+4,emb_l3,Reshape,/emb_l3/Reshape_kernel_time,CPUExecutionProvider,4,13069737547716,13069737547742,26,emb_l3:Reshape
+4,emb_l3,ReduceSum,/emb_l3/ReduceSum_kernel_time,CPUExecutionProvider,4,13069737547749,13069737961584,413835,emb_l3:ReduceSum
+0,emb_l4,Gather,/emb_l4/Gather_kernel_time,CPUExecutionProvider,5,13069703471896,13069704101019,629123,emb_l4:Gather
+0,emb_l4,Reshape,/emb_l4/Reshape_kernel_time,CPUExecutionProvider,5,13069704101040,13069704101065,25,emb_l4:Reshape
+0,emb_l4,ReduceSum,/emb_l4/ReduceSum_kernel_time,CPUExecutionProvider,5,13069704101072,13069704503162,402090,emb_l4:ReduceSum
+1,emb_l4,Gather,/emb_l4/Gather_kernel_time,CPUExecutionProvider,5,13069712635209,13069713115763,480554,emb_l4:Gather
+1,emb_l4,Reshape,/emb_l4/Reshape_kernel_time,CPUExecutionProvider,5,13069713115782,13069713115806,24,emb_l4:Reshape
+1,emb_l4,ReduceSum,/emb_l4/ReduceSum_kernel_time,CPUExecutionProvider,5,13069713115814,13069713526008,410194,emb_l4:ReduceSum
+2,emb_l4,Gather,/emb_l4/Gather_kernel_time,CPUExecutionProvider,5,13069721164747,13069721632415,467668,emb_l4:Gather
+2,emb_l4,Reshape,/emb_l4/Reshape_kernel_time,CPUExecutionProvider,5,13069721632435,13069721632458,23,emb_l4:Reshape
+2,emb_l4,ReduceSum,/emb_l4/ReduceSum_kernel_time,CPUExecutionProvider,5,13069721632464,13069722029177,396713,emb_l4:ReduceSum
+3,emb_l4,Gather,/emb_l4/Gather_kernel_time,CPUExecutionProvider,5,13069729138283,13069729667948,529665,emb_l4:Gather
+3,emb_l4,Reshape,/emb_l4/Reshape_kernel_time,CPUExecutionProvider,5,13069729667972,13069729667998,26,emb_l4:Reshape
+3,emb_l4,ReduceSum,/emb_l4/ReduceSum_kernel_time,CPUExecutionProvider,5,13069729668005,13069730190186,522181,emb_l4:ReduceSum
+4,emb_l4,Gather,/emb_l4/Gather_kernel_time,CPUExecutionProvider,5,13069737961826,13069738440173,478347,emb_l4:Gather
+4,emb_l4,Reshape,/emb_l4/Reshape_kernel_time,CPUExecutionProvider,5,13069738440201,13069738440233,32,emb_l4:Reshape
+4,emb_l4,ReduceSum,/emb_l4/ReduceSum_kernel_time,CPUExecutionProvider,5,13069738440239,13069739016513,576274,emb_l4:ReduceSum
+0,emb_l5,Gather,/emb_l5/Gather_kernel_time,CPUExecutionProvider,6,13069704503417,13069705298034,794617,emb_l5:Gather
+0,emb_l5,Reshape,/emb_l5/Reshape_kernel_time,CPUExecutionProvider,6,13069705298057,13069705298080,23,emb_l5:Reshape
+0,emb_l5,ReduceSum,/emb_l5/ReduceSum_kernel_time,CPUExecutionProvider,6,13069705298086,13069705694245,396159,emb_l5:ReduceSum
+1,emb_l5,Gather,/emb_l5/Gather_kernel_time,CPUExecutionProvider,6,13069713526246,13069713990835,464589,emb_l5:Gather
+1,emb_l5,Reshape,/emb_l5/Reshape_kernel_time,CPUExecutionProvider,6,13069713990855,13069713990879,24,emb_l5:Reshape
+1,emb_l5,ReduceSum,/emb_l5/ReduceSum_kernel_time,CPUExecutionProvider,6,13069713990887,13069714389018,398131,emb_l5:ReduceSum
+2,emb_l5,Gather,/emb_l5/Gather_kernel_time,CPUExecutionProvider,6,13069722029416,13069722496910,467494,emb_l5:Gather
+2,emb_l5,Reshape,/emb_l5/Reshape_kernel_time,CPUExecutionProvider,6,13069722496929,13069722496951,22,emb_l5:Reshape
+2,emb_l5,ReduceSum,/emb_l5/ReduceSum_kernel_time,CPUExecutionProvider,6,13069722496957,13069722901365,404408,emb_l5:ReduceSum
+3,emb_l5,Gather,/emb_l5/Gather_kernel_time,CPUExecutionProvider,6,13069730190434,13069730658109,467675,emb_l5:Gather
+3,emb_l5,Reshape,/emb_l5/Reshape_kernel_time,CPUExecutionProvider,6,13069730658128,13069730658152,24,emb_l5:Reshape
+3,emb_l5,ReduceSum,/emb_l5/ReduceSum_kernel_time,CPUExecutionProvider,6,13069730658159,13069731057672,399513,emb_l5:ReduceSum
+4,emb_l5,Gather,/emb_l5/Gather_kernel_time,CPUExecutionProvider,6,13069739016765,13069739477572,460807,emb_l5:Gather
+4,emb_l5,Reshape,/emb_l5/Reshape_kernel_time,CPUExecutionProvider,6,13069739477590,13069739477614,24,emb_l5:Reshape
+4,emb_l5,ReduceSum,/emb_l5/ReduceSum_kernel_time,CPUExecutionProvider,6,13069739477621,13069739875223,397602,emb_l5:ReduceSum
+0,emb_l6,Gather,/emb_l6/Gather_kernel_time,CPUExecutionProvider,7,13069705694495,13069706318639,624144,emb_l6:Gather
+0,emb_l6,Reshape,/emb_l6/Reshape_kernel_time,CPUExecutionProvider,7,13069706318661,13069706318686,25,emb_l6:Reshape
+0,emb_l6,ReduceSum,/emb_l6/ReduceSum_kernel_time,CPUExecutionProvider,7,13069706318692,13069706713473,394781,emb_l6:ReduceSum
+1,emb_l6,Gather,/emb_l6/Gather_kernel_time,CPUExecutionProvider,7,13069714389266,13069714967088,577822,emb_l6:Gather
+1,emb_l6,Reshape,/emb_l6/Reshape_kernel_time,CPUExecutionProvider,7,13069714967130,13069714967188,58,emb_l6:Reshape
+1,emb_l6,ReduceSum,/emb_l6/ReduceSum_kernel_time,CPUExecutionProvider,7,13069714967198,13069715751627,784429,emb_l6:ReduceSum
+2,emb_l6,Gather,/emb_l6/Gather_kernel_time,CPUExecutionProvider,7,13069722901605,13069723366307,464702,emb_l6:Gather
+2,emb_l6,Reshape,/emb_l6/Reshape_kernel_time,CPUExecutionProvider,7,13069723366327,13069723366351,24,emb_l6:Reshape
+2,emb_l6,ReduceSum,/emb_l6/ReduceSum_kernel_time,CPUExecutionProvider,7,13069723366357,13069723760439,394082,emb_l6:ReduceSum
+3,emb_l6,Gather,/emb_l6/Gather_kernel_time,CPUExecutionProvider,7,13069731057914,13069731527317,469403,emb_l6:Gather
+3,emb_l6,Reshape,/emb_l6/Reshape_kernel_time,CPUExecutionProvider,7,13069731527338,13069731527361,23,emb_l6:Reshape
+3,emb_l6,ReduceSum,/emb_l6/ReduceSum_kernel_time,CPUExecutionProvider,7,13069731527368,13069731927725,400357,emb_l6:ReduceSum
+4,emb_l6,Gather,/emb_l6/Gather_kernel_time,CPUExecutionProvider,7,13069739875458,13069740340736,465278,emb_l6:Gather
+4,emb_l6,Reshape,/emb_l6/Reshape_kernel_time,CPUExecutionProvider,7,13069740340756,13069740340780,24,emb_l6:Reshape
+4,emb_l6,ReduceSum,/emb_l6/ReduceSum_kernel_time,CPUExecutionProvider,7,13069740340787,13069740943235,602448,emb_l6:ReduceSum
+0,emb_l7,Gather,/emb_l7/Gather_kernel_time,CPUExecutionProvider,8,13069706713724,13069707466029,752305,emb_l7:Gather
+0,emb_l7,Reshape,/emb_l7/Reshape_kernel_time,CPUExecutionProvider,8,13069707466078,13069707466129,51,emb_l7:Reshape
+0,emb_l7,ReduceSum,/emb_l7/ReduceSum_kernel_time,CPUExecutionProvider,8,13069707466136,13069707910929,444793,emb_l7:ReduceSum
+1,emb_l7,Gather,/emb_l7/Gather_kernel_time,CPUExecutionProvider,8,13069715751957,13069716228275,476318,emb_l7:Gather
+1,emb_l7,Reshape,/emb_l7/Reshape_kernel_time,CPUExecutionProvider,8,13069716228295,13069716228318,23,emb_l7:Reshape
+1,emb_l7,ReduceSum,/emb_l7/ReduceSum_kernel_time,CPUExecutionProvider,8,13069716228326,13069716622344,394018,emb_l7:ReduceSum
+2,emb_l7,Gather,/emb_l7/Gather_kernel_time,CPUExecutionProvider,8,13069723760683,13069724225701,465018,emb_l7:Gather
+2,emb_l7,Reshape,/emb_l7/Reshape_kernel_time,CPUExecutionProvider,8,13069724225720,13069724225744,24,emb_l7:Reshape
+2,emb_l7,ReduceSum,/emb_l7/ReduceSum_kernel_time,CPUExecutionProvider,8,13069724225749,13069724621208,395459,emb_l7:ReduceSum
+3,emb_l7,Gather,/emb_l7/Gather_kernel_time,CPUExecutionProvider,8,13069731927963,13069732439859,511896,emb_l7:Gather
+3,emb_l7,Reshape,/emb_l7/Reshape_kernel_time,CPUExecutionProvider,8,13069732439882,13069732455959,16077,emb_l7:Reshape
+3,emb_l7,ReduceSum,/emb_l7/ReduceSum_kernel_time,CPUExecutionProvider,8,13069732455972,13069732980095,524123,emb_l7:ReduceSum
+4,emb_l7,Gather,/emb_l7/Gather_kernel_time,CPUExecutionProvider,8,13069740943480,13069741412481,469001,emb_l7:Gather
+4,emb_l7,Reshape,/emb_l7/Reshape_kernel_time,CPUExecutionProvider,8,13069741412500,13069741412523,23,emb_l7:Reshape
+4,emb_l7,ReduceSum,/emb_l7/ReduceSum_kernel_time,CPUExecutionProvider,8,13069741412530,13069742000219,587689,emb_l7:ReduceSum
+0,tail,Shape,/Shape_1_kernel_time,CPUExecutionProvider,9,13069707911452,13069707911500,48,tail:Shape
+0,tail,Gather,/Gather_9_kernel_time,CPUExecutionProvider,9,13069707911512,13069707911526,14,tail:Gather
+0,tail,Unsqueeze,/Unsqueeze_1_kernel_time,CPUExecutionProvider,9,13069707911533,13069707911544,11,tail:Unsqueeze
+0,tail,Gather,/Gather_8_kernel_time,CPUExecutionProvider,9,13069707911550,13069707911559,9,tail:Gather
+0,tail,Unsqueeze,/Unsqueeze_kernel_time,CPUExecutionProvider,9,13069707911564,13069707911571,7,tail:Unsqueeze
+0,tail,Concat,/Concat_1_kernel_time,CPUExecutionProvider,9,13069707911576,13069707911594,18,tail:Concat
+0,tail,Concat,/Concat_kernel_time,CPUExecutionProvider,9,13069707911605,13069707917745,6140,tail:Concat
+0,tail,Reshape,/Reshape_kernel_time,CPUExecutionProvider,9,13069707917764,13069707917785,21,tail:Reshape
+0,tail,FusedMatMul,/MatMul/MatmulTransposeFusion/_kernel_time,CPUExecutionProvider,9,13069707917799,13069707923893,6094,tail:FusedMatMul
+0,tail,Shape,/Shape_2_kernel_time,CPUExecutionProvider,9,13069707923912,13069707923933,21,tail:Shape
+0,tail,Gather,/Gather_10_kernel_time,CPUExecutionProvider,9,13069707923939,13069707923952,13,tail:Gather
+0,tail,Concat,/Concat_2_kernel_time,CPUExecutionProvider,9,13069707923958,13069707923974,16,tail:Concat
+0,tail,Gather,/Gather_11_kernel_time,CPUExecutionProvider,9,13069707923978,13069707923986,8,tail:Gather
+0,tail,Mul,/Mul_kernel_time,CPUExecutionProvider,9,13069707923992,13069707924010,18,tail:Mul
+0,tail,Add,/Add_kernel_time,CPUExecutionProvider,9,13069707924017,13069707924027,10,tail:Add
+0,tail,Transpose,/Transpose_1_kernel_time,CPUExecutionProvider,9,13069707924037,13069707924131,94,tail:Transpose
+0,tail,Flatten,/Flatten_kernel_time,CPUExecutionProvider,9,13069707924138,13069707924146,8,tail:Flatten
+0,tail,Gather,/Gather_12_kernel_time,CPUExecutionProvider,9,13069707924152,13069707924188,36,tail:Gather
+0,tail,Reshape,/Reshape_1_kernel_time,CPUExecutionProvider,9,13069707924195,13069707924204,9,tail:Reshape
+0,tail,Transpose,/Transpose_2_kernel_time,CPUExecutionProvider,9,13069707924209,13069707924245,36,tail:Transpose
+0,tail,Reshape,/Reshape_2_kernel_time,CPUExecutionProvider,9,13069707924251,13069707924259,8,tail:Reshape
+0,tail,Concat,/Concat_4_kernel_time,CPUExecutionProvider,9,13069707924263,13069707924765,502,tail:Concat
+0,tail,FusedGemm,fused /top_l/top_l.0/Gemm_kernel_time,CPUExecutionProvider,9,13069707924777,13069707978887,54110,tail:FusedGemm
+0,tail,FusedGemm,fused /top_l/top_l.2/Gemm_kernel_time,CPUExecutionProvider,9,13069707978904,13069708075385,96481,tail:FusedGemm
+0,tail,FusedGemm,fused /top_l/top_l.4/Gemm_kernel_time,CPUExecutionProvider,9,13069708075413,13069708076215,802,tail:FusedGemm
+1,tail,Shape,/Shape_1_kernel_time,CPUExecutionProvider,9,13069716622911,13069716622939,28,tail:Shape
+1,tail,Gather,/Gather_9_kernel_time,CPUExecutionProvider,9,13069716622950,13069716622964,14,tail:Gather
+1,tail,Unsqueeze,/Unsqueeze_1_kernel_time,CPUExecutionProvider,9,13069716622970,13069716622980,10,tail:Unsqueeze
+1,tail,Gather,/Gather_8_kernel_time,CPUExecutionProvider,9,13069716622986,13069716622994,8,tail:Gather
+1,tail,Unsqueeze,/Unsqueeze_kernel_time,CPUExecutionProvider,9,13069716623004,13069716623011,7,tail:Unsqueeze
+1,tail,Concat,/Concat_1_kernel_time,CPUExecutionProvider,9,13069716623016,13069716623033,17,tail:Concat
+1,tail,Concat,/Concat_kernel_time,CPUExecutionProvider,9,13069716623039,13069716627207,4168,tail:Concat
+1,tail,Reshape,/Reshape_kernel_time,CPUExecutionProvider,9,13069716627221,13069716627239,18,tail:Reshape
+1,tail,FusedMatMul,/MatMul/MatmulTransposeFusion/_kernel_time,CPUExecutionProvider,9,13069716627247,13069716633362,6115,tail:FusedMatMul
+1,tail,Shape,/Shape_2_kernel_time,CPUExecutionProvider,9,13069716633379,13069716633395,16,tail:Shape
+1,tail,Gather,/Gather_10_kernel_time,CPUExecutionProvider,9,13069716633401,13069716633414,13,tail:Gather
+1,tail,Concat,/Concat_2_kernel_time,CPUExecutionProvider,9,13069716633418,13069716633434,16,tail:Concat
+1,tail,Gather,/Gather_11_kernel_time,CPUExecutionProvider,9,13069716633439,13069716633447,8,tail:Gather
+1,tail,Mul,/Mul_kernel_time,CPUExecutionProvider,9,13069716633452,13069716633468,16,tail:Mul
+1,tail,Add,/Add_kernel_time,CPUExecutionProvider,9,13069716633474,13069716633484,10,tail:Add
+1,tail,Transpose,/Transpose_1_kernel_time,CPUExecutionProvider,9,13069716633490,13069716633590,100,tail:Transpose
+1,tail,Flatten,/Flatten_kernel_time,CPUExecutionProvider,9,13069716633598,13069716633607,9,tail:Flatten
+1,tail,Gather,/Gather_12_kernel_time,CPUExecutionProvider,9,13069716633612,13069716633652,40,tail:Gather
+1,tail,Reshape,/Reshape_1_kernel_time,CPUExecutionProvider,9,13069716633657,13069716633665,8,tail:Reshape
+1,tail,Transpose,/Transpose_2_kernel_time,CPUExecutionProvider,9,13069716633671,13069716633706,35,tail:Transpose
+1,tail,Reshape,/Reshape_2_kernel_time,CPUExecutionProvider,9,13069716633712,13069716633720,8,tail:Reshape
+1,tail,Concat,/Concat_4_kernel_time,CPUExecutionProvider,9,13069716633724,13069716634228,504,tail:Concat
+1,tail,FusedGemm,fused /top_l/top_l.0/Gemm_kernel_time,CPUExecutionProvider,9,13069716634238,13069716688825,54587,tail:FusedGemm
+1,tail,FusedGemm,fused /top_l/top_l.2/Gemm_kernel_time,CPUExecutionProvider,9,13069716688838,13069716785410,96572,tail:FusedGemm
+1,tail,FusedGemm,fused /top_l/top_l.4/Gemm_kernel_time,CPUExecutionProvider,9,13069716785429,13069716786238,809,tail:FusedGemm
+2,tail,Shape,/Shape_1_kernel_time,CPUExecutionProvider,9,13069724621682,13069724621719,37,tail:Shape
+2,tail,Gather,/Gather_9_kernel_time,CPUExecutionProvider,9,13069724621731,13069724621746,15,tail:Gather
+2,tail,Unsqueeze,/Unsqueeze_1_kernel_time,CPUExecutionProvider,9,13069724621752,13069724621762,10,tail:Unsqueeze
+2,tail,Gather,/Gather_8_kernel_time,CPUExecutionProvider,9,13069724621767,13069724621775,8,tail:Gather
+2,tail,Unsqueeze,/Unsqueeze_kernel_time,CPUExecutionProvider,9,13069724621780,13069724621786,6,tail:Unsqueeze
+2,tail,Concat,/Concat_1_kernel_time,CPUExecutionProvider,9,13069724621791,13069724621807,16,tail:Concat
+2,tail,Concat,/Concat_kernel_time,CPUExecutionProvider,9,13069724621813,13069724626039,4226,tail:Concat
+2,tail,Reshape,/Reshape_kernel_time,CPUExecutionProvider,9,13069724626052,13069724626070,18,tail:Reshape
+2,tail,FusedMatMul,/MatMul/MatmulTransposeFusion/_kernel_time,CPUExecutionProvider,9,13069724626079,13069724632192,6113,tail:FusedMatMul
+2,tail,Shape,/Shape_2_kernel_time,CPUExecutionProvider,9,13069724632216,13069724632229,13,tail:Shape
+2,tail,Gather,/Gather_10_kernel_time,CPUExecutionProvider,9,13069724632235,13069724632248,13,tail:Gather
+2,tail,Concat,/Concat_2_kernel_time,CPUExecutionProvider,9,13069724632253,13069724632268,15,tail:Concat
+2,tail,Gather,/Gather_11_kernel_time,CPUExecutionProvider,9,13069724632273,13069724632280,7,tail:Gather
+2,tail,Mul,/Mul_kernel_time,CPUExecutionProvider,9,13069724632285,13069724632301,16,tail:Mul
+2,tail,Add,/Add_kernel_time,CPUExecutionProvider,9,13069724632307,13069724632317,10,tail:Add
+2,tail,Transpose,/Transpose_1_kernel_time,CPUExecutionProvider,9,13069724632322,13069724632425,103,tail:Transpose
+2,tail,Flatten,/Flatten_kernel_time,CPUExecutionProvider,9,13069724632431,13069724632440,9,tail:Flatten
+2,tail,Gather,/Gather_12_kernel_time,CPUExecutionProvider,9,13069724632445,13069724632482,37,tail:Gather
+2,tail,Reshape,/Reshape_1_kernel_time,CPUExecutionProvider,9,13069724632488,13069724632497,9,tail:Reshape
+2,tail,Transpose,/Transpose_2_kernel_time,CPUExecutionProvider,9,13069724632502,13069724632539,37,tail:Transpose
+2,tail,Reshape,/Reshape_2_kernel_time,CPUExecutionProvider,9,13069724632544,13069724632552,8,tail:Reshape
+2,tail,Concat,/Concat_4_kernel_time,CPUExecutionProvider,9,13069724632557,13069724633061,504,tail:Concat
+2,tail,FusedGemm,fused /top_l/top_l.0/Gemm_kernel_time,CPUExecutionProvider,9,13069724633071,13069724688944,55873,tail:FusedGemm
+2,tail,FusedGemm,fused /top_l/top_l.2/Gemm_kernel_time,CPUExecutionProvider,9,13069724688956,13069724785381,96425,tail:FusedGemm
+2,tail,FusedGemm,fused /top_l/top_l.4/Gemm_kernel_time,CPUExecutionProvider,9,13069724785398,13069724786239,841,tail:FusedGemm
+3,tail,Shape,/Shape_1_kernel_time,CPUExecutionProvider,9,13069732980558,13069732980585,27,tail:Shape
+3,tail,Gather,/Gather_9_kernel_time,CPUExecutionProvider,9,13069732980594,13069732980608,14,tail:Gather
+3,tail,Unsqueeze,/Unsqueeze_1_kernel_time,CPUExecutionProvider,9,13069732980615,13069732980625,10,tail:Unsqueeze
+3,tail,Gather,/Gather_8_kernel_time,CPUExecutionProvider,9,13069732980631,13069732980639,8,tail:Gather
+3,tail,Unsqueeze,/Unsqueeze_kernel_time,CPUExecutionProvider,9,13069732980644,13069732980650,6,tail:Unsqueeze
+3,tail,Concat,/Concat_1_kernel_time,CPUExecutionProvider,9,13069732980655,13069732980672,17,tail:Concat
+3,tail,Concat,/Concat_kernel_time,CPUExecutionProvider,9,13069732980677,13069732984819,4142,tail:Concat
+3,tail,Reshape,/Reshape_kernel_time,CPUExecutionProvider,9,13069732984833,13069732984851,18,tail:Reshape
+3,tail,FusedMatMul,/MatMul/MatmulTransposeFusion/_kernel_time,CPUExecutionProvider,9,13069732984859,13069732990920,6061,tail:FusedMatMul
+3,tail,Shape,/Shape_2_kernel_time,CPUExecutionProvider,9,13069732990936,13069732990951,15,tail:Shape
+3,tail,Gather,/Gather_10_kernel_time,CPUExecutionProvider,9,13069732990957,13069732990969,12,tail:Gather
+3,tail,Concat,/Concat_2_kernel_time,CPUExecutionProvider,9,13069732990974,13069732990989,15,tail:Concat
+3,tail,Gather,/Gather_11_kernel_time,CPUExecutionProvider,9,13069732990993,13069732991000,7,tail:Gather
+3,tail,Mul,/Mul_kernel_time,CPUExecutionProvider,9,13069732991005,13069732991021,16,tail:Mul
+3,tail,Add,/Add_kernel_time,CPUExecutionProvider,9,13069732991028,13069732991037,9,tail:Add
+3,tail,Transpose,/Transpose_1_kernel_time,CPUExecutionProvider,9,13069732991043,13069732991136,93,tail:Transpose
+3,tail,Flatten,/Flatten_kernel_time,CPUExecutionProvider,9,13069732991142,13069732991150,8,tail:Flatten
+3,tail,Gather,/Gather_12_kernel_time,CPUExecutionProvider,9,13069732991155,13069732991193,38,tail:Gather
+3,tail,Reshape,/Reshape_1_kernel_time,CPUExecutionProvider,9,13069732991198,13069732991207,9,tail:Reshape
+3,tail,Transpose,/Transpose_2_kernel_time,CPUExecutionProvider,9,13069732991213,13069732991248,35,tail:Transpose
+3,tail,Reshape,/Reshape_2_kernel_time,CPUExecutionProvider,9,13069732991254,13069732991262,8,tail:Reshape
+3,tail,Concat,/Concat_4_kernel_time,CPUExecutionProvider,9,13069732991267,13069732991762,495,tail:Concat
+3,tail,FusedGemm,fused /top_l/top_l.0/Gemm_kernel_time,CPUExecutionProvider,9,13069732991771,13069733046462,54691,tail:FusedGemm
+3,tail,FusedGemm,fused /top_l/top_l.2/Gemm_kernel_time,CPUExecutionProvider,9,13069733046476,13069733143300,96824,tail:FusedGemm
+3,tail,FusedGemm,fused /top_l/top_l.4/Gemm_kernel_time,CPUExecutionProvider,9,13069733143316,13069733144181,865,tail:FusedGemm
+4,tail,Shape,/Shape_1_kernel_time,CPUExecutionProvider,9,13069742000709,13069742000745,36,tail:Shape
+4,tail,Gather,/Gather_9_kernel_time,CPUExecutionProvider,9,13069742000756,13069742000771,15,tail:Gather
+4,tail,Unsqueeze,/Unsqueeze_1_kernel_time,CPUExecutionProvider,9,13069742000778,13069742000788,10,tail:Unsqueeze
+4,tail,Gather,/Gather_8_kernel_time,CPUExecutionProvider,9,13069742000793,13069742000801,8,tail:Gather
+4,tail,Unsqueeze,/Unsqueeze_kernel_time,CPUExecutionProvider,9,13069742000806,13069742000812,6,tail:Unsqueeze
+4,tail,Concat,/Concat_1_kernel_time,CPUExecutionProvider,9,13069742000817,13069742000834,17,tail:Concat
+4,tail,Concat,/Concat_kernel_time,CPUExecutionProvider,9,13069742000841,13069742004997,4156,tail:Concat
+4,tail,Reshape,/Reshape_kernel_time,CPUExecutionProvider,9,13069742005012,13069742005030,18,tail:Reshape
+4,tail,FusedMatMul,/MatMul/MatmulTransposeFusion/_kernel_time,CPUExecutionProvider,9,13069742005038,13069742011151,6113,tail:FusedMatMul
+4,tail,Shape,/Shape_2_kernel_time,CPUExecutionProvider,9,13069742011169,13069742011185,16,tail:Shape
+4,tail,Gather,/Gather_10_kernel_time,CPUExecutionProvider,9,13069742011191,13069742011203,12,tail:Gather
+4,tail,Concat,/Concat_2_kernel_time,CPUExecutionProvider,9,13069742011208,13069742011224,16,tail:Concat
+4,tail,Gather,/Gather_11_kernel_time,CPUExecutionProvider,9,13069742011229,13069742011237,8,tail:Gather
+4,tail,Mul,/Mul_kernel_time,CPUExecutionProvider,9,13069742011242,13069742011259,17,tail:Mul
+4,tail,Add,/Add_kernel_time,CPUExecutionProvider,9,13069742011265,13069742011275,10,tail:Add
+4,tail,Transpose,/Transpose_1_kernel_time,CPUExecutionProvider,9,13069742011280,13069742011375,95,tail:Transpose
+4,tail,Flatten,/Flatten_kernel_time,CPUExecutionProvider,9,13069742011382,13069742011391,9,tail:Flatten
+4,tail,Gather,/Gather_12_kernel_time,CPUExecutionProvider,9,13069742011396,13069742011436,40,tail:Gather
+4,tail,Reshape,/Reshape_1_kernel_time,CPUExecutionProvider,9,13069742011442,13069742011451,9,tail:Reshape
+4,tail,Transpose,/Transpose_2_kernel_time,CPUExecutionProvider,9,13069742011473,13069742011509,36,tail:Transpose
+4,tail,Reshape,/Reshape_2_kernel_time,CPUExecutionProvider,9,13069742011515,13069742011523,8,tail:Reshape
+4,tail,Concat,/Concat_4_kernel_time,CPUExecutionProvider,9,13069742011528,13069742012046,518,tail:Concat
+4,tail,FusedGemm,fused /top_l/top_l.0/Gemm_kernel_time,CPUExecutionProvider,9,13069742012057,13069742066334,54277,tail:FusedGemm
+4,tail,FusedGemm,fused /top_l/top_l.2/Gemm_kernel_time,CPUExecutionProvider,9,13069742066350,13069742162804,96454,tail:FusedGemm
+4,tail,FusedGemm,fused /top_l/top_l.4/Gemm_kernel_time,CPUExecutionProvider,9,13069742162825,13069742163515,690,tail:FusedGemm

@@ -1,0 +1,25 @@
+{
+  "model_type": "a2a_async_overlap",
+  "created_at": "2026-05-19T15:05:52",
+  "base_comm_model": "a2a_latency",
+  "validation_mode": "replay_from_measured_a2a_validation",
+  "scope": "single-node 8 NPU HCCL All-to-All async region",
+  "params": {
+    "eta": 0.85,
+    "launch_overhead_us": 3.0,
+    "sync_overhead_us": 8.0,
+    "overlap_window_scale": 1.0
+  },
+  "compute_ratios": [
+    0.0,
+    0.25,
+    0.5,
+    1.0,
+    2.0,
+    4.0
+  ],
+  "notes": [
+    "eta is a scenario parameter unless calibrated from profiler traces.",
+    "Replay validation uses measured single-op communication latency as async ground truth input."
+  ]
+}

@@ -1,0 +1,148 @@
+{
+  "dataset_name": "source_kunpeng920_dataset3",
+  "input_dataset_root": "/data/qc/dlrm/ORT/CPU_model_stable/calibrator/data/source_kunpeng920_dataset3_thread_decoupling_phase2_raw",
+  "dataset_scope": "source",
+  "phase_scope": "source_only_multicase_thread_decoupling_v2",
+  "evaluation_scope": "source_only",
+  "scheduler_logs_root": "/data/qc/dlrm/ORT/case_dataset_scheduler_logs/20260419_185414",
+  "policy": "num_threads_decoupled_v2",
+  "axis": "num_threads_decoupled_v2",
+  "main_axis": "num_threads",
+  "aux_axis": "inter_threads",
+  "test_values": [
+    3,
+    5
+  ],
+  "main_axis_holdout_values": [
+    3,
+    5
+  ],
+  "aux_axis_train_values": [
+    1,
+    3,
+    5
+  ],
+  "aux_axis_test_values": [
+    1
+  ],
+  "train_case_ids": [
+    "case_10_1_1",
+    "case_10_2_1",
+    "case_10_4_1",
+    "case_10_4_3",
+    "case_10_4_5",
+    "case_7_1_1",
+    "case_7_2_1",
+    "case_7_4_1",
+    "case_7_4_3",
+    "case_7_4_5",
+    "case_8_1_1",
+    "case_8_2_1",
+    "case_8_4_1",
+    "case_8_4_3",
+    "case_8_4_5"
+  ],
+  "test_case_ids": [
+    "case_10_3_1",
+    "case_10_5_1",
+    "case_7_3_1",
+    "case_7_5_1",
+    "case_8_3_1",
+    "case_8_5_1"
+  ],
+  "raw_train_case_ids": [
+    "case_10_1_1",
+    "case_10_2_1",
+    "case_10_4_1",
+    "case_10_4_3",
+    "case_10_4_5",
+    "case_7_1_1",
+    "case_7_2_1",
+    "case_7_4_1",
+    "case_7_4_3",
+    "case_7_4_5",
+    "case_8_1_1",
+    "case_8_2_1",
+    "case_8_4_1",
+    "case_8_4_3",
+    "case_8_4_5"
+  ],
+  "raw_test_case_ids": [
+    "case_10_3_1",
+    "case_10_5_1",
+    "case_7_3_1",
+    "case_7_5_1",
+    "case_8_3_1",
+    "case_8_5_1"
+  ],
+  "total_rows": 3314,
+  "raw_train_rows": 2319,
+  "raw_test_rows": 995,
+  "raw_train_ratio": 0.6997585998792999,
+  "raw_test_ratio": 0.30024140012070005,
+  "retained_train_rows": 2319,
+  "retained_test_rows": 995,
+  "retained_train_ratio": 0.6997585998792999,
+  "retained_test_ratio": 0.30024140012070005,
+  "train_case_combo_groups": 60,
+  "test_case_combo_groups": 24,
+  "train_raw_case_combo_groups": 60,
+  "test_raw_case_combo_groups": 24,
+  "sampling_policy": "keep_all_within_band",
+  "selection_stats": {
+    "selection_method": "fixed_decoupled_values",
+    "main_axis": "num_threads",
+    "aux_axis": "inter_threads",
+    "main_axis_holdout_values": [
+      3,
+      5
+    ],
+    "candidate_values": [
+      3,
+      5
+    ],
+    "test_ratio": 0.30024140012070005,
+    "batch_coverage": 1.0,
+    "nip_coverage": 1.0,
+    "aux_axis_train_values": [
+      1,
+      3,
+      5
+    ],
+    "aux_axis_test_values": [
+      1
+    ]
+  },
+  "pipeline_metadata_available": true,
+  "pipeline_metadata_reason": "",
+  "pipeline_artifact_index_csv": "/data/qc/dlrm/ORT/CPU_model_stable/data_e2e_small_1_16/source_kunpeng920_dataset3_unseen_num_threads_decoupled_v2/pipeline_artifact_index.csv",
+  "pipeline_artifact_index_json": "/data/qc/dlrm/ORT/CPU_model_stable/data_e2e_small_1_16/source_kunpeng920_dataset3_unseen_num_threads_decoupled_v2/pipeline_artifact_index.json",
+  "pipeline_artifact_index_rows": 476,
+  "pipeline_combo_manifest_csv": "/data/qc/dlrm/ORT/CPU_model_stable/data_e2e_small_1_16/source_kunpeng920_dataset3_unseen_num_threads_decoupled_v2/pipeline_combo_manifest.csv",
+  "pipeline_combo_manifest_rows": 476,
+  "e2e_test_raw_available": true,
+  "e2e_split_mode": "combo_stratified",
+  "e2e_target_test_ratio": 0.3,
+  "e2e_main_axis": "num_threads",
+  "e2e_main_axis_test_values": [
+    1,
+    2,
+    3,
+    4,
+    5
+  ],
+  "e2e_train_rows": 16983,
+  "e2e_train_case_combo_groups": 333,
+  "e2e_train_combo_ratio": 0.6995798319327731,
+  "e2e_test_rows": 7293,
+  "e2e_test_ratio": 0.3004201680672269,
+  "e2e_test_case_combo_groups": 143,
+  "e2e_total_combo_count": 476,
+  "e2e_train_combo_count": 333,
+  "e2e_selected_combo_count": 143,
+  "e2e_graph_scope": "observable_profiled_nodes",
+  "small_dataset_parent": "/data/qc/dlrm/ORT/CPU_model_stable/calibrator/data/source_kunpeng920_dataset3_unseen_num_threads_decoupled_v2",
+  "small_dataset_divisor": 16,
+  "small_dataset_seed": 20260425,
+  "small_dataset_combo_fraction": 0.06244260789715335
+}

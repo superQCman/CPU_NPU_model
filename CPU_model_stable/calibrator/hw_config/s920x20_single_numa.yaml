@@ -1,0 +1,148 @@
+profile_name: s920x20_single_numa
+source_config: calibrator/hw_config/s920x20_single_numa.yaml
+source_paper: []
+notes:
+  - This profile models one local NUMA execution domain on the S920X20 host.
+  - Main numeric fields under core/cache/memory/pipeline are limited to directly observed values or values calibrated with hardware_calibration/raw/s920x20_recalib_20260428_3run.
+  - Cache response latencies are effective random-access pointer-chase proxies, not datasheet tag-array latencies.
+  - Pipeline width fields intentionally mirror the same effective issue-width proxy because the analytical model consumes min(fetch, decode, rename, dispatch, issue, commit).
+  - cpu_clock is the effective GHz observed from perf cycles/task-clock on the pinned issue-loop microbench, not only the exported cpuinfo_max_freq ceiling.
+  - simd_width_bits=256 is the hardware-max SVE width detected from /proc/sys/abi/sve_default_vector_length.
+  - fp_latency_cycles.vector_sp_* are the calibrated user-space vector proxy from the included NEON chain microbench; a separate SVE-specific latency loop is not stored in this profile yet.
+  - fp_throughput_per_cycle is measured with the independent SVE vector throughput microbench in hardware_calibration/raw/remote.
+  - Memory bandwidth is the best NUMA-local STREAM triad result at 40 threads.
+  - Whitebox-only copy bandwidth, random gather bandwidth, and launch overhead fields were remeasured on 2026-04-28 as 3-run medians with the dedicated OpenMP microbenches.
+  - L1 response latency uses the 10-run focused 48KiB pointer-chase median from the same recheck bundle because the full 3-run convergence pass showed transient L1 variation.
+  - The remote EDAC mem_type string is only Registered-SDR, so dram_speed_mt_s and DDR generation fields were intentionally omitted instead of guessed.
+scope:
+  execution_scope: single_numa
+  locality: numa_local
+  numa_node_index: 0
+  numa_cpu_list: 0-39
+  numa_mem_mb: 128766
+core:
+  architecture: aarch64
+  vendor: HiSilicon
+  model_name: S920X20
+  sockets: 1
+  total_cores: 40
+  cores_per_socket: 40
+  threads_per_core: 1
+  numa_nodes: 1
+  cores_per_die: 40
+  cpu_clock: 2.893398GHz
+cache:
+  l1i:
+    size: 64KiB
+    assoc: 4
+    shared_by_cpus: 1
+    tag_latency_cycles: 13.024487
+    data_latency_cycles: 13.024487
+    response_latency_cycles: 13.024487
+  l1d:
+    size: 64KiB
+    assoc: 4
+    shared_by_cpus: 1
+    tag_latency_cycles: 13.024487
+    data_latency_cycles: 13.024487
+    response_latency_cycles: 13.024487
+  l2:
+    size: 1280KiB
+    assoc: 10
+    shared_by_cpus: 1
+    tag_latency_cycles: 31.850238
+    data_latency_cycles: 31.850238
+    response_latency_cycles: 31.850238
+  l3_per_die:
+    size: 70MiB
+    assoc: 28
+    shared_by_cpus: 40
+    tag_latency_cycles: 126.632175
+    data_latency_cycles: 126.632175
+    response_latency_cycles: 126.632175
+  cacheline_bytes: 64
+  coherency_line_bytes_l3: 128
+memory:
+  numa_nodes: 1
+  dram_type: Registered-SDR
+  bandwidth_gb_s_per_socket: 138.2280
+  bandwidth_gb_s_total: 138.2280
+  local_mem_delay_ns: 88.0950
+  copy_bw_gb_s_1t: 35.900316
+  copy_bw_gb_s_saturated: 137.967158
+  random_gather_bw_gb_s_1t: 2.523200
+  random_gather_bw_gb_s_saturated: 18.047464
+runtime:
+  parallel_launch_overhead_us_intra: 10.699790
+  parallel_launch_overhead_us_inter: 19.678168
+pipeline:
+  fetch_width: 3.891586
+  decode_width: 3.891586
+  rename_width: 3.891586
+  dispatch_width: 3.891586
+  issue_width: 3.891586
+  wb_width: 3.891586
+  commit_width: 3.891586
+instruction:
+  isa_family: ARMv8-A+SVE
+  simd_name: SVE
+  simd_width_bits: 256
+  fp_latency_cycles:
+    vector_sp_add: 2.000095
+    vector_sp_mul: 3.000103
+    vector_sp_fma: 2.000094
+    scalar_dp_add: 2.000106
+    scalar_dp_mul: 3.000104
+    scalar_dp_fma: 4.000116
+  fp_throughput_per_cycle:
+    vector_sp_add: 1.999786
+    vector_sp_mul: 1.999792
+    vector_sp_fma: 1.999777
+host_cross_check:
+  lscpu_architecture: aarch64
+  lscpu_vendor: HiSilicon
+  lscpu_model_name: unresolved_from_lscpu
+  lscpu_sockets: 2
+  lscpu_cores_per_socket: 80
+  lscpu_threads_per_core: 1
+  lscpu_numa_nodes: 4
+  lscpu_total_cores: 160
+  target_numa_node_index: 0
+  target_numa_core_count: 40
+  target_numa_mem_mb: 128766
+  target_numa_cpu_clock_ghz: 2.893398
+  target_l1d_kib: 64
+  target_l1i_kib: 64
+  target_l2_kib: 1280
+  target_l3_mib: 70
+  calibration_summary_path: not_packaged/hardware_calibration/raw/s920x20_recalib_20260428_3run/selected_calibration_summary.json
+  whitebox_addon_raw_path: not_packaged/hardware_calibration/raw/s920x20_recalib_20260428_3run
+  l1_focus_raw_path: not_packaged/hardware_calibration/raw/s920x20_recalib_20260428_3run/l1_focus_ptrchase_10run.txt
+  measured_issue_cpu_clock_ghz: 2.893398
+  measured_ptrchase_l1_ns_48k: 4.50145
+  measured_ptrchase_l2_ns_1m: 11.0079
+  measured_ptrchase_l2_ns_1_25m: 12.5656
+  measured_ptrchase_l3_ns_70m: 43.7659
+  measured_ptrchase_mem_ns_256m: 88.0950
+  measured_stream_triad_gb_s_40_threads: 138.2280
+  measured_copy_bw_gb_s_1_thread: 35.900316
+  measured_copy_bw_gb_s_40_threads: 137.967158
+  measured_random_gather_bw_gb_s_1_thread: 2.523200
+  measured_random_gather_bw_gb_s_40_threads: 18.047464
+  measured_parallel_launch_overhead_us_intra_40_threads: 10.699790
+  measured_parallel_launch_overhead_us_inter_40_threads: 19.678168
+  measured_issue_ipc: 3.891586
+  measured_scalar_dp_add_cycles: 2.000106
+  measured_scalar_dp_mul_cycles: 3.000104
+  measured_scalar_dp_fma_cycles: 4.000116
+  measured_vector_sp_add_cycles: 2.000095
+  measured_vector_sp_mul_cycles: 3.000103
+  measured_vector_sp_fma_cycles: 2.000094
+  measured_vector_sp_add_throughput_per_cycle: 1.999786
+  measured_vector_sp_mul_throughput_per_cycle: 1.999792
+  measured_vector_sp_fma_throughput_per_cycle: 1.999777
+paper_cross_check:
+  detected_sve_vector_length_bytes: 32
+  detected_local_distance: 10
+  detected_nearest_remote_distance: 12
+  edac_mem_type_observed: Registered-SDR

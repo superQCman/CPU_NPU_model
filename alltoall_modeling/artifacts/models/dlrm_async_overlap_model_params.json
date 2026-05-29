@@ -1,0 +1,30 @@
+{
+  "model_type": "dlrm_a2a_async_overlap_calibration",
+  "created_at": "2026-05-26T16:27:50",
+  "source": "data/profiler/dlrm_single/ASCEND_PROFILER_OUTPUT",
+  "params": {
+    "eta": 0.1346881762404794,
+    "launch_overhead_us": 0.0,
+    "sync_overhead_us": 0.0,
+    "overlap_window_scale": 1.0
+  },
+  "observed_metrics": {
+    "steps": 70,
+    "eta_mean": 0.1379682461818045,
+    "eta_median": 0.1346881762404794,
+    "eta_p10": 0.1317341701439512,
+    "eta_p90": 0.13858794404556857,
+    "comm_mean_us": 48817.286571428565,
+    "compute_mean_us": 171.1768571428571,
+    "overlap_mean_us": 23.61685714285756,
+    "hidden_fraction_mean": 0.00048817650469785143,
+    "speedup_mean": 1.0004866921418938,
+    "model_mape_percent": 0.0019108645977941822,
+    "model_rmse_us": 4.397219615091748,
+    "model_p90_rel_err_percent": 0.0015970342535965734
+  },
+  "notes": [
+    "Calibrated from Ascend step_trace_time.csv Computing/Communication/Overlapped columns.",
+    "Overhead is set to zero because step_trace aggregate fields already include runtime scheduling effects."
+  ]
+}

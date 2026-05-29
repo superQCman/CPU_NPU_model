@@ -1,0 +1,134 @@
+profile_name: s920x20_single_numa
+source_config: "legacy_external:single_op_stage1_mlp/hardware_profile/s920x20_single_numa.yaml"
+source_paper: []
+notes:
+- This profile models one local NUMA execution domain on the current host.
+- core/cache/frequency values are detected from lscpu, cpufreq sysfs, and cache sysfs
+  for the selected NUMA node.
+- Memory bandwidth is a theoretical peak derived as channels_per_numa(4) * dram_speed_mt_s(3200)
+  * 8 bytes / 1000 = 102.4 GB/s.
+- 'dram_speed_mt_s source: heuristic_default_hi_freq_host; channels_per_numa source:
+  derived_from_populated_dimms. Override these with CLI flags if you have measured
+  platform data.'
+- cache latency, memory latency, pipeline width, and FP latency/throughput values
+  remain conservative modeling placeholders because the local OS does not expose them
+  directly.
+- Detected 16 populated EDAC DIMMs across the host, each totaling 32768 MiB on average.
+scope:
+  execution_scope: single_numa
+  locality: numa_local
+  numa_node_index: 0
+  numa_cpu_list: 0-39
+  numa_mem_mb: 128766
+core:
+  architecture: aarch64
+  vendor: HiSilicon
+  model_name: S920X20
+  sockets: 1
+  total_cores: 40
+  cores_per_socket: 40
+  threads_per_core: 1
+  numa_nodes: 1
+  cores_per_die: 40
+  cpu_clock: 2.9GHz
+cache:
+  l1i:
+    size: 64KiB
+    assoc: 4
+    shared_by_cpus: 1
+    tag_latency_cycles: 1
+    data_latency_cycles: 1
+    response_latency_cycles: 1
+  l1d:
+    size: 64KiB
+    assoc: 4
+    shared_by_cpus: 1
+    tag_latency_cycles: 1
+    data_latency_cycles: 1
+    response_latency_cycles: 1
+  l2:
+    size: 1280KiB
+    assoc: 10
+    shared_by_cpus: 1
+    tag_latency_cycles: 10
+    data_latency_cycles: 10
+    response_latency_cycles: 10
+  l3_per_die:
+    size: 70MiB
+    assoc: 28
+    shared_by_cpus: 40
+    tag_latency_cycles: 20
+    data_latency_cycles: 20
+    response_latency_cycles: 20
+  cacheline_bytes: 64
+  coherency_line_bytes_l3: 128
+memory:
+  numa_nodes: 1
+  controllers_per_socket: 4
+  controllers_total: 4
+  channels_per_socket: 4
+  channels_total: 4
+  dram_type: DDR4
+  dram_speed_mt_s: 3200
+  bandwidth_gb_s_per_socket: 102.4
+  bandwidth_gb_s_total: 102.4
+  local_mem_delay_ns: 90.0
+  remote_mem_delay_ns: 108.0
+pipeline:
+  fetch_width: 4
+  decode_width: 4
+  rename_width: 4
+  dispatch_width: 4
+  issue_width: 4
+  wb_width: 4
+  commit_width: 4
+instruction:
+  isa_family: ARMv8-A+SVE
+  simd_name: SVE
+  simd_width_bits: 256
+  fp_latency_cycles:
+    vector_dp_add: 4
+    vector_dp_mul: 5
+    vector_dp_fma: 7
+    vector_sp_add: 4
+    vector_sp_mul: 5
+    vector_sp_fma: 7
+    scalar_dp_add: 4
+    scalar_dp_mul: 5
+    scalar_sp_add: 4
+    scalar_sp_mul: 5
+  fp_throughput_per_cycle:
+    vector_dp_add: 1
+    vector_dp_mul: 1
+    vector_dp_fma: 1
+    vector_sp_add: 1
+    vector_sp_mul: 1
+    vector_sp_fma: 1
+    scalar_dp_sp_add: 2
+    scalar_dp_sp_mul: 2
+    scalar_dp_sp_fma: 2
+host_cross_check:
+  lscpu_architecture: aarch64
+  lscpu_vendor: HiSilicon
+  lscpu_model_name: S920X20
+  lscpu_sockets: 2
+  lscpu_cores_per_socket: 80
+  lscpu_threads_per_core: 1
+  lscpu_numa_nodes: 4
+  lscpu_total_cores: 160
+  target_numa_node_index: 0
+  target_numa_core_count: 40
+  target_numa_mem_mb: 128766
+  target_numa_cpu_clock_ghz: 2.9
+  target_l1d_kib: 64
+  target_l1i_kib: 64
+  target_l2_kib: 1280
+  target_l3_mib: 70
+  detected_populated_dimms_host_total: 16
+paper_cross_check:
+  derived_local_numa_bandwidth_gb_s: 102.4
+  detected_sve_vector_length_bytes: 32
+  detected_local_distance: 10
+  detected_nearest_remote_distance: 12
+  derived_channels_per_numa: 4
+  derived_controllers_per_numa: 4

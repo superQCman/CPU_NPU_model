@@ -1,0 +1,28 @@
+version: 1
+description: Explicit CPU/NPU routing for the delivered DLRM CPU+NPU E2E fusion model.
+
+routes:
+  npu:
+    Gather: Gather
+    ReduceSum: ReduceSum
+    Gemm: GemmBias
+    MatMul: MatMulV2
+    Relu: Relu
+    Sigmoid: Sigmoid
+    Add: Add
+    Mul: Mul
+    Concat: ConcatD
+    Transpose: Transpose
+
+  cpu:
+    Reshape: Reshape
+    Shape: Shape
+    Flatten: Flatten
+    Unsqueeze: Unsqueeze
+
+  ignore:
+    Constant: Constant
+
+synthetic:
+  alltoall_op_type: AllToAll
+

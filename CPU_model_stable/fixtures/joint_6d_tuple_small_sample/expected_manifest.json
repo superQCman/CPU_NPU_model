@@ -1,0 +1,51 @@
+{
+  "required_files": [
+    "dataset_full.csv",
+    "e2e_test_raw.csv",
+    "e2e_test_raw_case_combo_groups.csv",
+    "e2e_train.csv",
+    "e2e_train_case_combo_groups.csv",
+    "fixture_manifest.json",
+    "joint_6d_tuple_audit.csv",
+    "test.csv",
+    "test_case_combo_groups.csv",
+    "test_raw.csv",
+    "test_raw_case_combo_groups.csv",
+    "train.csv",
+    "train_case_combo_groups.csv",
+    "train_raw.csv",
+    "train_raw_case_combo_groups.csv"
+  ],
+  "required_columns": [
+    "arch_embedding_size",
+    "arch_mlp_bot",
+    "batch_size",
+    "case_id",
+    "combo",
+    "inter_threads",
+    "num_indices_per_lookup",
+    "num_threads",
+    "op_idx",
+    "op_type",
+    "profile_label_kept_batch_mean_us",
+    "row_uid",
+    "source_name"
+  ],
+  "fixture_manifest": {
+    "fixture_name": "joint_6d_tuple_small_sample",
+    "source_dataset_root": "<original-current-small-dataset>",
+  "source_dataset_root_original": "/data/qc/dlrm/ORT/CPU_model_stable/data_e2e_small_1_16/source_kunpeng920_dataset3_unseen_joint_6d_tuple",
+    "policy": "joint_6d_tuple",
+    "train_rows": 408,
+    "test_rows": 408,
+    "train_combo_count": 8,
+    "test_combo_count": 8,
+    "expected_rows_per_combo": 51,
+    "observed_min_rows_per_combo": 51,
+    "observed_max_rows_per_combo": 51,
+    "joint_key_overlap_count": 0,
+    "small_dataset_divisor": 16,
+    "small_dataset_seed": 20260425,
+    "reference_split_manifest_sha256": "5abc1c4b41557c7454e28b6061157927b65c4b900cfc28e2b82fb72618dd005b"
+  }
+}

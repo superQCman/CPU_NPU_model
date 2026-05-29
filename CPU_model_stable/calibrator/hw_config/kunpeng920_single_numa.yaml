@@ -1,0 +1,161 @@
+profile_name: kunpeng920_single_numa
+source_config: calibrator/hw_config/kunpeng920_single_numa.yaml
+source_paper:
+  - "legacy_external:鲲鹏920.pdf"
+  - "legacy_external:A_Comparative_Analysis_of_Kunpeng_920_on_HPC_Workloads.pdf"
+notes:
+  - This profile models one local NUMA execution domain on the 4-socket Kunpeng-920 host.
+  - Main numeric fields under core/cache/memory/pipeline are limited to directly observed values or values calibrated with hardware_calibration/raw/local.
+  - The current effective performance fields use the 5-run median recorded in hardware_calibration/raw/local_convergence_5run after reducing host background load on 2026-04-19.
+  - Cache response latencies are effective random-access pointer-chase proxies, not datasheet tag-array latencies.
+  - The local L2 and L3 proxy points were tightened to 256 KiB and 16 MiB because those capacities converged materially better than the earlier 384 KiB and 8 MiB picks.
+  - Pipeline width fields intentionally mirror the same effective issue-width proxy because the analytical model consumes min(fetch, decode, rename, dispatch, issue, commit).
+  - cpu_clock is the effective GHz observed from perf cycles/task-clock on the pinned issue-loop microbench, not a vendor max-frequency string.
+  - Memory bandwidth is the 5-run median NUMA-local STREAM triad result at 24 threads.
+  - fp_throughput_per_cycle is measured with the independent NEON vector throughput microbench in hardware_calibration/raw/local.
+  - Unverified placeholder fields from the earlier profile were removed instead of being kept as facts.
+  - Whitebox-only copy bandwidth, random gather bandwidth, and launch overhead fields were measured locally on 2026-04-21 with the dedicated OpenMP microbenches and are now required by the hard-policy whitebox routes.
+scope:
+  execution_scope: single_numa
+  locality: numa_local
+  numa_node_index: 0
+  numa_cpu_list: 0-23
+  numa_mem_mb: 192665
+core:
+  architecture: aarch64
+  vendor: HiSilicon
+  model_name: Kunpeng-920
+  sockets: 1
+  total_cores: 24
+  cores_per_socket: 24
+  threads_per_core: 1
+  numa_nodes: 1
+  cores_per_die: 24
+  cpu_clock: 2.592166GHz
+cache:
+  l1i:
+    size: 64KiB
+    assoc: 4
+    shared_by_cpus: 1
+    tag_latency_cycles: 11.662672
+    data_latency_cycles: 11.662672
+    response_latency_cycles: 11.662672
+  l1d:
+    size: 64KiB
+    assoc: 4
+    shared_by_cpus: 1
+    tag_latency_cycles: 11.662672
+    data_latency_cycles: 11.662672
+    response_latency_cycles: 11.662672
+  l2:
+    size: 512KiB
+    assoc: 8
+    shared_by_cpus: 1
+    tag_latency_cycles: 21.333783
+    data_latency_cycles: 21.333783
+    response_latency_cycles: 21.333783
+  l3_per_die:
+    size: 24MiB
+    assoc: 15
+    shared_by_cpus: 24
+    tag_latency_cycles: 121.825564
+    data_latency_cycles: 121.825564
+    response_latency_cycles: 121.825564
+  cacheline_bytes: 64
+  coherency_line_bytes_l3: 128
+memory:
+  numa_nodes: 1
+  dram_type: Registered-DDR4
+  bandwidth_gb_s_per_socket: 41.0935
+  bandwidth_gb_s_total: 41.0935
+  local_mem_delay_ns: 91.0687
+  copy_bw_gb_s_1t: 5.048952
+  copy_bw_gb_s_saturated: 30.820562
+  random_gather_bw_gb_s_1t: 0.840198
+  random_gather_bw_gb_s_saturated: 4.160243
+  gather_slice_copy_bw:
+    measured_slices: 1000000
+    points:
+      - {block_size_bytes: 800, num_threads: 1, write_gb_s: 2.809232}
+      - {block_size_bytes: 800, num_threads: 2, write_gb_s: 4.687166}
+      - {block_size_bytes: 800, num_threads: 3, write_gb_s: 7.385636}
+      - {block_size_bytes: 800, num_threads: 4, write_gb_s: 9.144934}
+      - {block_size_bytes: 800, num_threads: 5, write_gb_s: 11.392898}
+      - {block_size_bytes: 1600, num_threads: 1, write_gb_s: 3.098059}
+      - {block_size_bytes: 1600, num_threads: 2, write_gb_s: 5.874041}
+      - {block_size_bytes: 1600, num_threads: 3, write_gb_s: 7.008891}
+      - {block_size_bytes: 1600, num_threads: 4, write_gb_s: 5.123523}
+      - {block_size_bytes: 1600, num_threads: 5, write_gb_s: 9.129628}
+runtime:
+  parallel_launch_overhead_us_intra: 843.905855
+  parallel_launch_overhead_us_inter: 832.877529
+pipeline:
+  fetch_width: 2.938467
+  decode_width: 2.938467
+  rename_width: 2.938467
+  dispatch_width: 2.938467
+  issue_width: 2.938467
+  wb_width: 2.938467
+  commit_width: 2.938467
+instruction:
+  isa_family: ARMv8.2-A
+  simd_name: NEON
+  simd_width_bits: 128
+  fp_latency_cycles:
+    vector_sp_add: 5.000226
+    vector_sp_mul: 5.000210
+    vector_sp_fma: 4.000215
+    scalar_dp_add: 4.000206
+    scalar_dp_mul: 5.000218
+    scalar_dp_fma: 7.000221
+  fp_throughput_per_cycle:
+    vector_sp_add: 1.499752
+    vector_sp_mul: 1.499756
+    vector_sp_fma: 1.749673
+host_cross_check:
+  lscpu_architecture: aarch64
+  lscpu_vendor: HiSilicon
+  lscpu_model_name: Kunpeng-920
+  lscpu_sockets: 4
+  lscpu_cores_per_socket: 48
+  lscpu_threads_per_core: 1
+  lscpu_numa_nodes: 8
+  lscpu_l1d_per_core_kib: 64
+  lscpu_l1i_per_core_kib: 64
+  lscpu_l2_per_core_kib: 512
+  lscpu_l3_per_numa_mib: 24
+  convergence_summary_path: not_packaged/hardware_calibration/raw/local_convergence_5run/convergence_summary.json
+  measured_issue_cpu_clock_ghz: 2.592166
+  measured_ptrchase_l1_ns_48k: 4.4992
+  measured_ptrchase_l2_ns_256k: 8.2301
+  measured_ptrchase_l3_ns_16m: 46.9976
+  measured_ptrchase_l2_cv_percent_256k: 4.36
+  measured_ptrchase_l3_cv_percent_16m: 0.84
+  measured_ptrchase_mem_ns_64m: 92.1612
+  measured_ptrchase_mem_ns_256m: 91.0687
+  measured_stream_triad_gb_s_24_threads: 41.0935
+  measured_stream_cv_percent_24_threads: 0.83
+  measured_copy_bw_gb_s_1_thread: 5.048952
+  measured_copy_bw_gb_s_24_threads: 30.820562
+  measured_random_gather_bw_gb_s_1_thread: 0.840198
+  measured_random_gather_bw_gb_s_24_threads: 4.160243
+  measured_parallel_launch_overhead_us_intra_24_threads: 843.905855
+  measured_parallel_launch_overhead_us_inter_24_threads: 832.877529
+  measured_issue_ipc: 2.938467
+  measured_issue_ipc_cv_percent: 0.00
+  measured_scalar_dp_add_cycles: 4.000206
+  measured_scalar_dp_mul_cycles: 5.000218
+  measured_scalar_dp_fma_cycles: 7.000221
+  measured_vector_sp_add_cycles: 5.000226
+  measured_vector_sp_mul_cycles: 5.000210
+  measured_vector_sp_fma_cycles: 4.000215
+  measured_vector_sp_add_throughput_per_cycle: 1.499752
+  measured_vector_sp_mul_throughput_per_cycle: 1.499756
+  measured_vector_sp_fma_throughput_per_cycle: 1.749673
+paper_cross_check:
+  huawei_research_2021_pipeline_width: 4
+  huawei_research_2021_l1i_kib: 64
+  huawei_research_2021_l1d_kib: 64
+  huawei_research_2021_l2_kib: 512
+  hpc_workloads_2024_frequency_ghz: 2.6
+  hpc_workloads_2024_simd_width_bits: 128

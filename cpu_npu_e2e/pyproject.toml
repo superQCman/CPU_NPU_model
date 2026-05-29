@@ -1,0 +1,20 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "cpu-npu-e2e"
+version = "0.1.0"
+description = "CPU/NPU/All-to-All end-to-end DLRM performance model fusion."
+requires-python = ">=3.10"
+dependencies = [
+  "joblib",
+  "numpy",
+  "pandas",
+  "PyYAML",
+  "scikit-learn",
+]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+

@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "policy": "joint_6d_tuple",
+  "split_name": "source_kunpeng920_dataset3_unseen_joint_6d_tuple",
+  "metadata_policy": "actual_hardware_binding_overrides_stale_dataset_metadata",
+  "datasets": {
+    "s920x20_local": {
+      "data_root": "../../data/data_e2e_full_s920x20_20260501",
+      "hw_config": "../hw_config/s920x20_single_numa.yaml",
+      "actual_hardware": "s920x20_single_numa",
+      "metadata_note": "Full split collected on the local S920X20 machine. Treat actual_hardware binding as ground truth."
+    },
+    "kunpeng920_remote": {
+      "data_root": "../../data/data_e2e_full_kunpeng920_20260501_portable",
+      "hw_config": "../hw_config/kunpeng920_single_numa.yaml",
+      "actual_hardware": "kunpeng920_single_numa",
+      "metadata_note": "Full split collected on the remote Kunpeng920 machine and transferred as a portable package with local shape/timeline artifacts."
+    }
+  }
+}

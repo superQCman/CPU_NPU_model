@@ -1,0 +1,187 @@
+node_idx,node_name,op_type,tensor_role,port_idx,tensor_name,dtype,shape,is_dynamic,shape_source,producer_node,consumer_nodes
+0,/emb_l0/Gather,Gather,input,0,emb_l.0.weight,float32,"[51200, 400]",False,static,initializer,0:/emb_l0/Gather:Gather
+0,/emb_l0/Gather,Gather,input,1,indices_0,int64,[2112000],False,runtime,graph_input,0:/emb_l0/Gather:Gather
+0,/emb_l0/Gather,Gather,output,0,__emb_l0_gather_out,float32,"[2112000, 400]",False,runtime,0:/emb_l0/Gather:Gather,2:/emb_l0/Reshape:Reshape
+1,/emb_l0/ReshapeShape,Constant,output,0,__emb_l0_reshape_shape,int64,[3],False,runtime,1:/emb_l0/ReshapeShape:Constant,2:/emb_l0/Reshape:Reshape
+2,/emb_l0/Reshape,Reshape,input,0,__emb_l0_gather_out,float32,"[2112000, 400]",False,runtime,0:/emb_l0/Gather:Gather,2:/emb_l0/Reshape:Reshape
+2,/emb_l0/Reshape,Reshape,input,1,__emb_l0_reshape_shape,int64,[3],False,runtime,1:/emb_l0/ReshapeShape:Constant,2:/emb_l0/Reshape:Reshape
+2,/emb_l0/Reshape,Reshape,output,0,__emb_l0_reshape_out,float32,"[1920, 1100, 400]",False,runtime,2:/emb_l0/Reshape:Reshape,3:/emb_l0/ReduceSum:ReduceSum
+3,/emb_l0/ReduceSum,ReduceSum,input,0,__emb_l0_reshape_out,float32,"[1920, 1100, 400]",False,runtime,2:/emb_l0/Reshape:Reshape,3:/emb_l0/ReduceSum:ReduceSum
+3,/emb_l0/ReduceSum,ReduceSum,output,0,/emb_l.0/Loop_output_0,float32,"[1920, 400]",False,runtime,3:/emb_l0/ReduceSum:ReduceSum,42:/Concat:Concat
+4,/emb_l1/Gather,Gather,input,0,emb_l.1.weight,float32,"[51200, 400]",False,static,initializer,4:/emb_l1/Gather:Gather
+4,/emb_l1/Gather,Gather,input,1,indices_1,int64,[2112000],False,runtime,graph_input,4:/emb_l1/Gather:Gather
+4,/emb_l1/Gather,Gather,output,0,__emb_l1_gather_out,float32,"[2112000, 400]",False,runtime,4:/emb_l1/Gather:Gather,6:/emb_l1/Reshape:Reshape
+5,/emb_l1/ReshapeShape,Constant,output,0,__emb_l1_reshape_shape,int64,[3],False,runtime,5:/emb_l1/ReshapeShape:Constant,6:/emb_l1/Reshape:Reshape
+6,/emb_l1/Reshape,Reshape,input,0,__emb_l1_gather_out,float32,"[2112000, 400]",False,runtime,4:/emb_l1/Gather:Gather,6:/emb_l1/Reshape:Reshape
+6,/emb_l1/Reshape,Reshape,input,1,__emb_l1_reshape_shape,int64,[3],False,runtime,5:/emb_l1/ReshapeShape:Constant,6:/emb_l1/Reshape:Reshape
+6,/emb_l1/Reshape,Reshape,output,0,__emb_l1_reshape_out,float32,"[1920, 1100, 400]",False,runtime,6:/emb_l1/Reshape:Reshape,7:/emb_l1/ReduceSum:ReduceSum
+7,/emb_l1/ReduceSum,ReduceSum,input,0,__emb_l1_reshape_out,float32,"[1920, 1100, 400]",False,runtime,6:/emb_l1/Reshape:Reshape,7:/emb_l1/ReduceSum:ReduceSum
+7,/emb_l1/ReduceSum,ReduceSum,output,0,/emb_l.1/Loop_output_0,float32,"[1920, 400]",False,runtime,7:/emb_l1/ReduceSum:ReduceSum,42:/Concat:Concat
+8,/emb_l2/Gather,Gather,input,0,emb_l.2.weight,float32,"[51200, 400]",False,static,initializer,8:/emb_l2/Gather:Gather
+8,/emb_l2/Gather,Gather,input,1,indices_2,int64,[2112000],False,runtime,graph_input,8:/emb_l2/Gather:Gather
+8,/emb_l2/Gather,Gather,output,0,__emb_l2_gather_out,float32,"[2112000, 400]",False,runtime,8:/emb_l2/Gather:Gather,10:/emb_l2/Reshape:Reshape
+9,/emb_l2/ReshapeShape,Constant,output,0,__emb_l2_reshape_shape,int64,[3],False,runtime,9:/emb_l2/ReshapeShape:Constant,10:/emb_l2/Reshape:Reshape
+10,/emb_l2/Reshape,Reshape,input,0,__emb_l2_gather_out,float32,"[2112000, 400]",False,runtime,8:/emb_l2/Gather:Gather,10:/emb_l2/Reshape:Reshape
+10,/emb_l2/Reshape,Reshape,input,1,__emb_l2_reshape_shape,int64,[3],False,runtime,9:/emb_l2/ReshapeShape:Constant,10:/emb_l2/Reshape:Reshape
+10,/emb_l2/Reshape,Reshape,output,0,__emb_l2_reshape_out,float32,"[1920, 1100, 400]",False,runtime,10:/emb_l2/Reshape:Reshape,11:/emb_l2/ReduceSum:ReduceSum
+11,/emb_l2/ReduceSum,ReduceSum,input,0,__emb_l2_reshape_out,float32,"[1920, 1100, 400]",False,runtime,10:/emb_l2/Reshape:Reshape,11:/emb_l2/ReduceSum:ReduceSum
+11,/emb_l2/ReduceSum,ReduceSum,output,0,/emb_l.2/Loop_output_0,float32,"[1920, 400]",False,runtime,11:/emb_l2/ReduceSum:ReduceSum,42:/Concat:Concat
+12,/emb_l3/Gather,Gather,input,0,emb_l.3.weight,float32,"[51200, 400]",False,static,initializer,12:/emb_l3/Gather:Gather
+12,/emb_l3/Gather,Gather,input,1,indices_3,int64,[2112000],False,runtime,graph_input,12:/emb_l3/Gather:Gather
+12,/emb_l3/Gather,Gather,output,0,__emb_l3_gather_out,float32,"[2112000, 400]",False,runtime,12:/emb_l3/Gather:Gather,14:/emb_l3/Reshape:Reshape
+13,/emb_l3/ReshapeShape,Constant,output,0,__emb_l3_reshape_shape,int64,[3],False,runtime,13:/emb_l3/ReshapeShape:Constant,14:/emb_l3/Reshape:Reshape
+14,/emb_l3/Reshape,Reshape,input,0,__emb_l3_gather_out,float32,"[2112000, 400]",False,runtime,12:/emb_l3/Gather:Gather,14:/emb_l3/Reshape:Reshape
+14,/emb_l3/Reshape,Reshape,input,1,__emb_l3_reshape_shape,int64,[3],False,runtime,13:/emb_l3/ReshapeShape:Constant,14:/emb_l3/Reshape:Reshape
+14,/emb_l3/Reshape,Reshape,output,0,__emb_l3_reshape_out,float32,"[1920, 1100, 400]",False,runtime,14:/emb_l3/Reshape:Reshape,15:/emb_l3/ReduceSum:ReduceSum
+15,/emb_l3/ReduceSum,ReduceSum,input,0,__emb_l3_reshape_out,float32,"[1920, 1100, 400]",False,runtime,14:/emb_l3/Reshape:Reshape,15:/emb_l3/ReduceSum:ReduceSum
+15,/emb_l3/ReduceSum,ReduceSum,output,0,/emb_l.3/Loop_output_0,float32,"[1920, 400]",False,runtime,15:/emb_l3/ReduceSum:ReduceSum,42:/Concat:Concat
+16,/emb_l4/Gather,Gather,input,0,emb_l.4.weight,float32,"[51200, 400]",False,static,initializer,16:/emb_l4/Gather:Gather
+16,/emb_l4/Gather,Gather,input,1,indices_4,int64,[2112000],False,runtime,graph_input,16:/emb_l4/Gather:Gather
+16,/emb_l4/Gather,Gather,output,0,__emb_l4_gather_out,float32,"[2112000, 400]",False,runtime,16:/emb_l4/Gather:Gather,18:/emb_l4/Reshape:Reshape
+17,/emb_l4/ReshapeShape,Constant,output,0,__emb_l4_reshape_shape,int64,[3],False,runtime,17:/emb_l4/ReshapeShape:Constant,18:/emb_l4/Reshape:Reshape
+18,/emb_l4/Reshape,Reshape,input,0,__emb_l4_gather_out,float32,"[2112000, 400]",False,runtime,16:/emb_l4/Gather:Gather,18:/emb_l4/Reshape:Reshape
+18,/emb_l4/Reshape,Reshape,input,1,__emb_l4_reshape_shape,int64,[3],False,runtime,17:/emb_l4/ReshapeShape:Constant,18:/emb_l4/Reshape:Reshape
+18,/emb_l4/Reshape,Reshape,output,0,__emb_l4_reshape_out,float32,"[1920, 1100, 400]",False,runtime,18:/emb_l4/Reshape:Reshape,19:/emb_l4/ReduceSum:ReduceSum
+19,/emb_l4/ReduceSum,ReduceSum,input,0,__emb_l4_reshape_out,float32,"[1920, 1100, 400]",False,runtime,18:/emb_l4/Reshape:Reshape,19:/emb_l4/ReduceSum:ReduceSum
+19,/emb_l4/ReduceSum,ReduceSum,output,0,/emb_l.4/Loop_output_0,float32,"[1920, 400]",False,runtime,19:/emb_l4/ReduceSum:ReduceSum,42:/Concat:Concat
+20,/emb_l5/Gather,Gather,input,0,emb_l.5.weight,float32,"[51200, 400]",False,static,initializer,20:/emb_l5/Gather:Gather
+20,/emb_l5/Gather,Gather,input,1,indices_5,int64,[2112000],False,runtime,graph_input,20:/emb_l5/Gather:Gather
+20,/emb_l5/Gather,Gather,output,0,__emb_l5_gather_out,float32,"[2112000, 400]",False,runtime,20:/emb_l5/Gather:Gather,22:/emb_l5/Reshape:Reshape
+21,/emb_l5/ReshapeShape,Constant,output,0,__emb_l5_reshape_shape,int64,[3],False,runtime,21:/emb_l5/ReshapeShape:Constant,22:/emb_l5/Reshape:Reshape
+22,/emb_l5/Reshape,Reshape,input,0,__emb_l5_gather_out,float32,"[2112000, 400]",False,runtime,20:/emb_l5/Gather:Gather,22:/emb_l5/Reshape:Reshape
+22,/emb_l5/Reshape,Reshape,input,1,__emb_l5_reshape_shape,int64,[3],False,runtime,21:/emb_l5/ReshapeShape:Constant,22:/emb_l5/Reshape:Reshape
+22,/emb_l5/Reshape,Reshape,output,0,__emb_l5_reshape_out,float32,"[1920, 1100, 400]",False,runtime,22:/emb_l5/Reshape:Reshape,23:/emb_l5/ReduceSum:ReduceSum
+23,/emb_l5/ReduceSum,ReduceSum,input,0,__emb_l5_reshape_out,float32,"[1920, 1100, 400]",False,runtime,22:/emb_l5/Reshape:Reshape,23:/emb_l5/ReduceSum:ReduceSum
+23,/emb_l5/ReduceSum,ReduceSum,output,0,/emb_l.5/Loop_output_0,float32,"[1920, 400]",False,runtime,23:/emb_l5/ReduceSum:ReduceSum,42:/Concat:Concat
+24,/emb_l6/Gather,Gather,input,0,emb_l.6.weight,float32,"[51200, 400]",False,static,initializer,24:/emb_l6/Gather:Gather
+24,/emb_l6/Gather,Gather,input,1,indices_6,int64,[2112000],False,runtime,graph_input,24:/emb_l6/Gather:Gather
+24,/emb_l6/Gather,Gather,output,0,__emb_l6_gather_out,float32,"[2112000, 400]",False,runtime,24:/emb_l6/Gather:Gather,26:/emb_l6/Reshape:Reshape
+25,/emb_l6/ReshapeShape,Constant,output,0,__emb_l6_reshape_shape,int64,[3],False,runtime,25:/emb_l6/ReshapeShape:Constant,26:/emb_l6/Reshape:Reshape
+26,/emb_l6/Reshape,Reshape,input,0,__emb_l6_gather_out,float32,"[2112000, 400]",False,runtime,24:/emb_l6/Gather:Gather,26:/emb_l6/Reshape:Reshape
+26,/emb_l6/Reshape,Reshape,input,1,__emb_l6_reshape_shape,int64,[3],False,runtime,25:/emb_l6/ReshapeShape:Constant,26:/emb_l6/Reshape:Reshape
+26,/emb_l6/Reshape,Reshape,output,0,__emb_l6_reshape_out,float32,"[1920, 1100, 400]",False,runtime,26:/emb_l6/Reshape:Reshape,27:/emb_l6/ReduceSum:ReduceSum
+27,/emb_l6/ReduceSum,ReduceSum,input,0,__emb_l6_reshape_out,float32,"[1920, 1100, 400]",False,runtime,26:/emb_l6/Reshape:Reshape,27:/emb_l6/ReduceSum:ReduceSum
+27,/emb_l6/ReduceSum,ReduceSum,output,0,/emb_l.6/Loop_output_0,float32,"[1920, 400]",False,runtime,27:/emb_l6/ReduceSum:ReduceSum,42:/Concat:Concat
+28,/emb_l7/Gather,Gather,input,0,emb_l.7.weight,float32,"[51200, 400]",False,static,initializer,28:/emb_l7/Gather:Gather
+28,/emb_l7/Gather,Gather,input,1,indices_7,int64,[2112000],False,runtime,graph_input,28:/emb_l7/Gather:Gather
+28,/emb_l7/Gather,Gather,output,0,__emb_l7_gather_out,float32,"[2112000, 400]",False,runtime,28:/emb_l7/Gather:Gather,30:/emb_l7/Reshape:Reshape
+29,/emb_l7/ReshapeShape,Constant,output,0,__emb_l7_reshape_shape,int64,[3],False,runtime,29:/emb_l7/ReshapeShape:Constant,30:/emb_l7/Reshape:Reshape
+30,/emb_l7/Reshape,Reshape,input,0,__emb_l7_gather_out,float32,"[2112000, 400]",False,runtime,28:/emb_l7/Gather:Gather,30:/emb_l7/Reshape:Reshape
+30,/emb_l7/Reshape,Reshape,input,1,__emb_l7_reshape_shape,int64,[3],False,runtime,29:/emb_l7/ReshapeShape:Constant,30:/emb_l7/Reshape:Reshape
+30,/emb_l7/Reshape,Reshape,output,0,__emb_l7_reshape_out,float32,"[1920, 1100, 400]",False,runtime,30:/emb_l7/Reshape:Reshape,31:/emb_l7/ReduceSum:ReduceSum
+31,/emb_l7/ReduceSum,ReduceSum,input,0,__emb_l7_reshape_out,float32,"[1920, 1100, 400]",False,runtime,30:/emb_l7/Reshape:Reshape,31:/emb_l7/ReduceSum:ReduceSum
+31,/emb_l7/ReduceSum,ReduceSum,output,0,/emb_l.7/Loop_output_0,float32,"[1920, 400]",False,runtime,31:/emb_l7/ReduceSum:ReduceSum,42:/Concat:Concat
+32,/bot_l/bot_l.0/Gemm,Gemm,input,0,dense_x,float32,"[1920, 800]",False,runtime,graph_input,32:/bot_l/bot_l.0/Gemm:Gemm
+32,/bot_l/bot_l.0/Gemm,Gemm,input,1,bot_l.0.weight,float32,"[800, 800]",False,static,initializer,32:/bot_l/bot_l.0/Gemm:Gemm
+32,/bot_l/bot_l.0/Gemm,Gemm,input,2,bot_l.0.bias,float32,[800],False,static,initializer,32:/bot_l/bot_l.0/Gemm:Gemm
+32,/bot_l/bot_l.0/Gemm,Gemm,output,0,/bot_l/bot_l.0/Gemm_output_0,float32,"[1920, 800]",False,runtime,32:/bot_l/bot_l.0/Gemm:Gemm,33:/bot_l/bot_l.1/Relu:Relu
+33,/bot_l/bot_l.1/Relu,Relu,input,0,/bot_l/bot_l.0/Gemm_output_0,float32,"[1920, 800]",False,runtime,32:/bot_l/bot_l.0/Gemm:Gemm,33:/bot_l/bot_l.1/Relu:Relu
+33,/bot_l/bot_l.1/Relu,Relu,output,0,/bot_l/bot_l.1/Relu_output_0,float32,"[1920, 800]",False,runtime,33:/bot_l/bot_l.1/Relu:Relu,34:/bot_l/bot_l.2/Gemm:Gemm
+34,/bot_l/bot_l.2/Gemm,Gemm,input,0,/bot_l/bot_l.1/Relu_output_0,float32,"[1920, 800]",False,runtime,33:/bot_l/bot_l.1/Relu:Relu,34:/bot_l/bot_l.2/Gemm:Gemm
+34,/bot_l/bot_l.2/Gemm,Gemm,input,1,bot_l.2.weight,float32,"[400, 800]",False,static,initializer,34:/bot_l/bot_l.2/Gemm:Gemm
+34,/bot_l/bot_l.2/Gemm,Gemm,input,2,bot_l.2.bias,float32,[400],False,static,initializer,34:/bot_l/bot_l.2/Gemm:Gemm
+34,/bot_l/bot_l.2/Gemm,Gemm,output,0,/bot_l/bot_l.2/Gemm_output_0,float32,"[1920, 400]",False,runtime,34:/bot_l/bot_l.2/Gemm:Gemm,35:/bot_l/bot_l.3/Relu:Relu
+35,/bot_l/bot_l.3/Relu,Relu,input,0,/bot_l/bot_l.2/Gemm_output_0,float32,"[1920, 400]",False,runtime,34:/bot_l/bot_l.2/Gemm:Gemm,35:/bot_l/bot_l.3/Relu:Relu
+35,/bot_l/bot_l.3/Relu,Relu,output,0,/bot_l/bot_l.3/Relu_output_0,float32,"[1920, 400]",False,runtime,35:/bot_l/bot_l.3/Relu:Relu,"36:/Shape:Shape, 39:/Shape_1:Shape, 42:/Concat:Concat, 69:/Concat_4:Concat"
+36,/Shape,Shape,input,0,/bot_l/bot_l.3/Relu_output_0,float32,"[1920, 400]",False,runtime,35:/bot_l/bot_l.3/Relu:Relu,"36:/Shape:Shape, 39:/Shape_1:Shape, 42:/Concat:Concat, 69:/Concat_4:Concat"
+36,/Shape,Shape,output,0,/Shape_output_0,int64,[2],False,runtime,36:/Shape:Shape,38:/Gather_8:Gather
+37,/Constant_8,Constant,output,0,/Constant_8_output_0,int64,scalar,False,runtime,37:/Constant_8:Constant,38:/Gather_8:Gather
+38,/Gather_8,Gather,input,0,/Shape_output_0,int64,[2],False,runtime,36:/Shape:Shape,38:/Gather_8:Gather
+38,/Gather_8,Gather,input,1,/Constant_8_output_0,int64,scalar,False,runtime,37:/Constant_8:Constant,38:/Gather_8:Gather
+38,/Gather_8,Gather,output,0,/Gather_8_output_0,int64,scalar,False,runtime,38:/Gather_8:Gather,43:/Unsqueeze:Unsqueeze
+39,/Shape_1,Shape,input,0,/bot_l/bot_l.3/Relu_output_0,float32,"[1920, 400]",False,runtime,35:/bot_l/bot_l.3/Relu:Relu,"36:/Shape:Shape, 39:/Shape_1:Shape, 42:/Concat:Concat, 69:/Concat_4:Concat"
+39,/Shape_1,Shape,output,0,/Shape_1_output_0,int64,[2],False,runtime,39:/Shape_1:Shape,41:/Gather_9:Gather
+40,/Constant_9,Constant,output,0,/Constant_9_output_0,int64,scalar,False,runtime,40:/Constant_9:Constant,41:/Gather_9:Gather
+41,/Gather_9,Gather,input,0,/Shape_1_output_0,int64,[2],False,runtime,39:/Shape_1:Shape,41:/Gather_9:Gather
+41,/Gather_9,Gather,input,1,/Constant_9_output_0,int64,scalar,False,runtime,40:/Constant_9:Constant,41:/Gather_9:Gather
+41,/Gather_9,Gather,output,0,/Gather_9_output_0,int64,scalar,False,runtime,41:/Gather_9:Gather,45:/Unsqueeze_1:Unsqueeze
+42,/Concat,Concat,input,0,/bot_l/bot_l.3/Relu_output_0,float32,"[1920, 400]",False,runtime,35:/bot_l/bot_l.3/Relu:Relu,"36:/Shape:Shape, 39:/Shape_1:Shape, 42:/Concat:Concat, 69:/Concat_4:Concat"
+42,/Concat,Concat,input,1,/emb_l.0/Loop_output_0,float32,"[1920, 400]",False,runtime,3:/emb_l0/ReduceSum:ReduceSum,42:/Concat:Concat
+42,/Concat,Concat,input,2,/emb_l.1/Loop_output_0,float32,"[1920, 400]",False,runtime,7:/emb_l1/ReduceSum:ReduceSum,42:/Concat:Concat
+42,/Concat,Concat,input,3,/emb_l.2/Loop_output_0,float32,"[1920, 400]",False,runtime,11:/emb_l2/ReduceSum:ReduceSum,42:/Concat:Concat
+42,/Concat,Concat,input,4,/emb_l.3/Loop_output_0,float32,"[1920, 400]",False,runtime,15:/emb_l3/ReduceSum:ReduceSum,42:/Concat:Concat
+42,/Concat,Concat,input,5,/emb_l.4/Loop_output_0,float32,"[1920, 400]",False,runtime,19:/emb_l4/ReduceSum:ReduceSum,42:/Concat:Concat
+42,/Concat,Concat,input,6,/emb_l.5/Loop_output_0,float32,"[1920, 400]",False,runtime,23:/emb_l5/ReduceSum:ReduceSum,42:/Concat:Concat
+42,/Concat,Concat,input,7,/emb_l.6/Loop_output_0,float32,"[1920, 400]",False,runtime,27:/emb_l6/ReduceSum:ReduceSum,42:/Concat:Concat
+42,/Concat,Concat,input,8,/emb_l.7/Loop_output_0,float32,"[1920, 400]",False,runtime,31:/emb_l7/ReduceSum:ReduceSum,42:/Concat:Concat
+42,/Concat,Concat,output,0,/Concat_output_0,float32,"[1920, 3600]",False,runtime,42:/Concat:Concat,47:/Reshape:Reshape
+43,/Unsqueeze,Unsqueeze,input,0,/Gather_8_output_0,int64,scalar,False,runtime,38:/Gather_8:Gather,43:/Unsqueeze:Unsqueeze
+43,/Unsqueeze,Unsqueeze,output,0,/Unsqueeze_output_0,int64,[1],False,runtime,43:/Unsqueeze:Unsqueeze,46:/Concat_1:Concat
+44,/Constant_10,Constant,output,0,/Constant_10_output_0,int64,[1],False,runtime,44:/Constant_10:Constant,46:/Concat_1:Concat
+45,/Unsqueeze_1,Unsqueeze,input,0,/Gather_9_output_0,int64,scalar,False,runtime,41:/Gather_9:Gather,45:/Unsqueeze_1:Unsqueeze
+45,/Unsqueeze_1,Unsqueeze,output,0,/Unsqueeze_1_output_0,int64,[1],False,runtime,45:/Unsqueeze_1:Unsqueeze,46:/Concat_1:Concat
+46,/Concat_1,Concat,input,0,/Unsqueeze_output_0,int64,[1],False,runtime,43:/Unsqueeze:Unsqueeze,46:/Concat_1:Concat
+46,/Concat_1,Concat,input,1,/Constant_10_output_0,int64,[1],False,runtime,44:/Constant_10:Constant,46:/Concat_1:Concat
+46,/Concat_1,Concat,input,2,/Unsqueeze_1_output_0,int64,[1],False,runtime,45:/Unsqueeze_1:Unsqueeze,46:/Concat_1:Concat
+46,/Concat_1,Concat,output,0,/Concat_1_output_0,int64,[3],False,runtime,46:/Concat_1:Concat,47:/Reshape:Reshape
+47,/Reshape,Reshape,input,0,/Concat_output_0,float32,"[1920, 3600]",False,runtime,42:/Concat:Concat,47:/Reshape:Reshape
+47,/Reshape,Reshape,input,1,/Concat_1_output_0,int64,[3],False,runtime,46:/Concat_1:Concat,47:/Reshape:Reshape
+47,/Reshape,Reshape,output,0,/Reshape_output_0,float32,"[1920, 9, 400]",False,runtime,47:/Reshape:Reshape,"48:/Transpose:Transpose, 49:/MatMul:MatMul"
+48,/Transpose,Transpose,input,0,/Reshape_output_0,float32,"[1920, 9, 400]",False,runtime,47:/Reshape:Reshape,"48:/Transpose:Transpose, 49:/MatMul:MatMul"
+48,/Transpose,Transpose,output,0,/Transpose_output_0,float32,"[1920, 400, 9]",False,runtime,48:/Transpose:Transpose,49:/MatMul:MatMul
+49,/MatMul,MatMul,input,0,/Reshape_output_0,float32,"[1920, 9, 400]",False,runtime,47:/Reshape:Reshape,"48:/Transpose:Transpose, 49:/MatMul:MatMul"
+49,/MatMul,MatMul,input,1,/Transpose_output_0,float32,"[1920, 400, 9]",False,runtime,48:/Transpose:Transpose,49:/MatMul:MatMul
+49,/MatMul,MatMul,output,0,/MatMul_output_0,float32,"[1920, 9, 9]",False,runtime,49:/MatMul:MatMul,"50:/Shape_2:Shape, 55:/Transpose_1:Transpose"
+50,/Shape_2,Shape,input,0,/MatMul_output_0,float32,"[1920, 9, 9]",False,runtime,49:/MatMul:MatMul,"50:/Shape_2:Shape, 55:/Transpose_1:Transpose"
+50,/Shape_2,Shape,output,0,/Shape_2_output_0,int64,[3],False,runtime,50:/Shape_2:Shape,"52:/Gather_10:Gather, 54:/Gather_11:Gather"
+51,/Constant_11,Constant,output,0,/Constant_11_output_0,int64,[1],False,runtime,51:/Constant_11:Constant,52:/Gather_10:Gather
+52,/Gather_10,Gather,input,0,/Shape_2_output_0,int64,[3],False,runtime,50:/Shape_2:Shape,"52:/Gather_10:Gather, 54:/Gather_11:Gather"
+52,/Gather_10,Gather,input,1,/Constant_11_output_0,int64,[1],False,runtime,51:/Constant_11:Constant,52:/Gather_10:Gather
+52,/Gather_10,Gather,output,0,/Gather_10_output_0,int64,[1],False,runtime,52:/Gather_10:Gather,"64:/Concat_2:Concat, 67:/Concat_3:Concat"
+53,/Constant_12,Constant,output,0,/Constant_12_output_0,int64,[1],False,runtime,53:/Constant_12:Constant,54:/Gather_11:Gather
+54,/Gather_11,Gather,input,0,/Shape_2_output_0,int64,[3],False,runtime,50:/Shape_2:Shape,"52:/Gather_10:Gather, 54:/Gather_11:Gather"
+54,/Gather_11,Gather,input,1,/Constant_12_output_0,int64,[1],False,runtime,53:/Constant_12:Constant,54:/Gather_11:Gather
+54,/Gather_11,Gather,output,0,/Gather_11_output_0,int64,[1],False,runtime,54:/Gather_11:Gather,58:/Mul:Mul
+55,/Transpose_1,Transpose,input,0,/MatMul_output_0,float32,"[1920, 9, 9]",False,runtime,49:/MatMul:MatMul,"50:/Shape_2:Shape, 55:/Transpose_1:Transpose"
+55,/Transpose_1,Transpose,output,0,/Transpose_1_output_0,float32,"[9, 9, 1920]",False,runtime,55:/Transpose_1:Transpose,56:/Flatten:Flatten
+56,/Flatten,Flatten,input,0,/Transpose_1_output_0,float32,"[9, 9, 1920]",False,runtime,55:/Transpose_1:Transpose,56:/Flatten:Flatten
+56,/Flatten,Flatten,output,0,/Flatten_output_0,float32,"[81, 1920]",False,runtime,56:/Flatten:Flatten,61:/Gather_12:Gather
+57,/Constant_13,Constant,output,0,/Constant_13_output_0,int64,[36],False,runtime,57:/Constant_13:Constant,58:/Mul:Mul
+58,/Mul,Mul,input,0,/Constant_13_output_0,int64,[36],False,runtime,57:/Constant_13:Constant,58:/Mul:Mul
+58,/Mul,Mul,input,1,/Gather_11_output_0,int64,[1],False,runtime,54:/Gather_11:Gather,58:/Mul:Mul
+58,/Mul,Mul,output,0,/Mul_output_0,int64,[36],False,runtime,58:/Mul:Mul,60:/Add:Add
+59,/Constant_14,Constant,output,0,/Constant_14_output_0,int64,[36],False,runtime,59:/Constant_14:Constant,60:/Add:Add
+60,/Add,Add,input,0,/Constant_14_output_0,int64,[36],False,runtime,59:/Constant_14:Constant,60:/Add:Add
+60,/Add,Add,input,1,/Mul_output_0,int64,[36],False,runtime,58:/Mul:Mul,60:/Add:Add
+60,/Add,Add,output,0,/Add_output_0,int64,[36],False,runtime,60:/Add:Add,"61:/Gather_12:Gather, 62:/Shape_3:Shape"
+61,/Gather_12,Gather,input,0,/Flatten_output_0,float32,"[81, 1920]",False,runtime,56:/Flatten:Flatten,61:/Gather_12:Gather
+61,/Gather_12,Gather,input,1,/Add_output_0,int64,[36],False,runtime,60:/Add:Add,"61:/Gather_12:Gather, 62:/Shape_3:Shape"
+61,/Gather_12,Gather,output,0,/Gather_12_output_0,float32,"[36, 1920]",False,runtime,61:/Gather_12:Gather,65:/Reshape_1:Reshape
+62,/Shape_3,Shape,input,0,/Add_output_0,int64,[36],False,runtime,60:/Add:Add,"61:/Gather_12:Gather, 62:/Shape_3:Shape"
+62,/Shape_3,Shape,output,0,/Shape_3_output_0,int64,[1],False,runtime,62:/Shape_3:Shape,67:/Concat_3:Concat
+63,/Constant_15,Constant,output,0,/Constant_15_output_0,int64,[1],False,runtime,63:/Constant_15:Constant,64:/Concat_2:Concat
+64,/Concat_2,Concat,input,0,/Constant_15_output_0,int64,[1],False,runtime,63:/Constant_15:Constant,64:/Concat_2:Concat
+64,/Concat_2,Concat,input,1,/Gather_10_output_0,int64,[1],False,runtime,52:/Gather_10:Gather,"64:/Concat_2:Concat, 67:/Concat_3:Concat"
+64,/Concat_2,Concat,output,0,/Concat_2_output_0,int64,[2],False,runtime,64:/Concat_2:Concat,65:/Reshape_1:Reshape
+65,/Reshape_1,Reshape,input,0,/Gather_12_output_0,float32,"[36, 1920]",False,runtime,61:/Gather_12:Gather,65:/Reshape_1:Reshape
+65,/Reshape_1,Reshape,input,1,/Concat_2_output_0,int64,[2],False,runtime,64:/Concat_2:Concat,65:/Reshape_1:Reshape
+65,/Reshape_1,Reshape,output,0,/Reshape_1_output_0,float32,"[36, 1920]",False,runtime,65:/Reshape_1:Reshape,66:/Transpose_2:Transpose
+66,/Transpose_2,Transpose,input,0,/Reshape_1_output_0,float32,"[36, 1920]",False,runtime,65:/Reshape_1:Reshape,66:/Transpose_2:Transpose
+66,/Transpose_2,Transpose,output,0,/Transpose_2_output_0,float32,"[1920, 36]",False,runtime,66:/Transpose_2:Transpose,68:/Reshape_2:Reshape
+67,/Concat_3,Concat,input,0,/Gather_10_output_0,int64,[1],False,runtime,52:/Gather_10:Gather,"64:/Concat_2:Concat, 67:/Concat_3:Concat"
+67,/Concat_3,Concat,input,1,/Shape_3_output_0,int64,[1],False,runtime,62:/Shape_3:Shape,67:/Concat_3:Concat
+67,/Concat_3,Concat,output,0,/Concat_3_output_0,int64,[2],False,runtime,67:/Concat_3:Concat,68:/Reshape_2:Reshape
+68,/Reshape_2,Reshape,input,0,/Transpose_2_output_0,float32,"[1920, 36]",False,runtime,66:/Transpose_2:Transpose,68:/Reshape_2:Reshape
+68,/Reshape_2,Reshape,input,1,/Concat_3_output_0,int64,[2],False,runtime,67:/Concat_3:Concat,68:/Reshape_2:Reshape
+68,/Reshape_2,Reshape,output,0,/Reshape_2_output_0,float32,"[1920, 36]",False,runtime,68:/Reshape_2:Reshape,69:/Concat_4:Concat
+69,/Concat_4,Concat,input,0,/bot_l/bot_l.3/Relu_output_0,float32,"[1920, 400]",False,runtime,35:/bot_l/bot_l.3/Relu:Relu,"36:/Shape:Shape, 39:/Shape_1:Shape, 42:/Concat:Concat, 69:/Concat_4:Concat"
+69,/Concat_4,Concat,input,1,/Reshape_2_output_0,float32,"[1920, 36]",False,runtime,68:/Reshape_2:Reshape,69:/Concat_4:Concat
+69,/Concat_4,Concat,output,0,/Concat_4_output_0,float32,"[1920, 436]",False,runtime,69:/Concat_4:Concat,70:/top_l/top_l.0/Gemm:Gemm
+70,/top_l/top_l.0/Gemm,Gemm,input,0,/Concat_4_output_0,float32,"[1920, 436]",False,runtime,69:/Concat_4:Concat,70:/top_l/top_l.0/Gemm:Gemm
+70,/top_l/top_l.0/Gemm,Gemm,input,1,top_l.0.weight,float32,"[1600, 436]",False,static,initializer,70:/top_l/top_l.0/Gemm:Gemm
+70,/top_l/top_l.0/Gemm,Gemm,input,2,top_l.0.bias,float32,[1600],False,static,initializer,70:/top_l/top_l.0/Gemm:Gemm
+70,/top_l/top_l.0/Gemm,Gemm,output,0,/top_l/top_l.0/Gemm_output_0,float32,"[1920, 1600]",False,runtime,70:/top_l/top_l.0/Gemm:Gemm,71:/top_l/top_l.1/Relu:Relu
+71,/top_l/top_l.1/Relu,Relu,input,0,/top_l/top_l.0/Gemm_output_0,float32,"[1920, 1600]",False,runtime,70:/top_l/top_l.0/Gemm:Gemm,71:/top_l/top_l.1/Relu:Relu
+71,/top_l/top_l.1/Relu,Relu,output,0,/top_l/top_l.1/Relu_output_0,float32,"[1920, 1600]",False,runtime,71:/top_l/top_l.1/Relu:Relu,72:/top_l/top_l.2/Gemm:Gemm
+72,/top_l/top_l.2/Gemm,Gemm,input,0,/top_l/top_l.1/Relu_output_0,float32,"[1920, 1600]",False,runtime,71:/top_l/top_l.1/Relu:Relu,72:/top_l/top_l.2/Gemm:Gemm
+72,/top_l/top_l.2/Gemm,Gemm,input,1,top_l.2.weight,float32,"[800, 1600]",False,static,initializer,72:/top_l/top_l.2/Gemm:Gemm
+72,/top_l/top_l.2/Gemm,Gemm,input,2,top_l.2.bias,float32,[800],False,static,initializer,72:/top_l/top_l.2/Gemm:Gemm
+72,/top_l/top_l.2/Gemm,Gemm,output,0,/top_l/top_l.2/Gemm_output_0,float32,"[1920, 800]",False,runtime,72:/top_l/top_l.2/Gemm:Gemm,73:/top_l/top_l.3/Relu:Relu
+73,/top_l/top_l.3/Relu,Relu,input,0,/top_l/top_l.2/Gemm_output_0,float32,"[1920, 800]",False,runtime,72:/top_l/top_l.2/Gemm:Gemm,73:/top_l/top_l.3/Relu:Relu
+73,/top_l/top_l.3/Relu,Relu,output,0,/top_l/top_l.3/Relu_output_0,float32,"[1920, 800]",False,runtime,73:/top_l/top_l.3/Relu:Relu,74:/top_l/top_l.4/Gemm:Gemm
+74,/top_l/top_l.4/Gemm,Gemm,input,0,/top_l/top_l.3/Relu_output_0,float32,"[1920, 800]",False,runtime,73:/top_l/top_l.3/Relu:Relu,74:/top_l/top_l.4/Gemm:Gemm
+74,/top_l/top_l.4/Gemm,Gemm,input,1,top_l.4.weight,float32,"[1, 800]",False,static,initializer,74:/top_l/top_l.4/Gemm:Gemm
+74,/top_l/top_l.4/Gemm,Gemm,input,2,top_l.4.bias,float32,[1],False,static,initializer,74:/top_l/top_l.4/Gemm:Gemm
+74,/top_l/top_l.4/Gemm,Gemm,output,0,/top_l/top_l.4/Gemm_output_0,float32,"[1920, 1]",False,runtime,74:/top_l/top_l.4/Gemm:Gemm,75:/top_l/top_l.5/Sigmoid:Sigmoid
+75,/top_l/top_l.5/Sigmoid,Sigmoid,input,0,/top_l/top_l.4/Gemm_output_0,float32,"[1920, 1]",False,runtime,74:/top_l/top_l.4/Gemm:Gemm,75:/top_l/top_l.5/Sigmoid:Sigmoid
+75,/top_l/top_l.5/Sigmoid,Sigmoid,output,0,pred,float32,"[1920, 1]",False,runtime,75:/top_l/top_l.5/Sigmoid:Sigmoid,graph_output

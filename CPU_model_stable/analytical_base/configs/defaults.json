@@ -1,0 +1,116 @@
+{
+  "default_scales": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    8,
+    10,
+    15,
+    20,
+    30,
+    50,
+    100
+  ],
+  "graph_semantic_columns": [
+    "node_scope",
+    "node_name_normalized",
+    "arch_embedding_size",
+    "arch_mlp_bot",
+    "arch_mlp_top"
+  ],
+  "no_analytical_op_types": [
+    "Reshape",
+    "Shape",
+    "Flatten",
+    "Unsqueeze"
+  ],
+  "tree_params": {
+    "max_depth": 8,
+    "min_samples_leaf": 40,
+    "random_state": 0
+  },
+  "calibrator_families": {
+    "dt": {
+      "kind": "dt",
+      "params": {
+        "max_depth": 8,
+        "min_samples_leaf": 40,
+        "random_state": 0
+      }
+    },
+    "dt12": {
+      "kind": "dt",
+      "params": {
+        "max_depth": 12,
+        "min_samples_leaf": 12,
+        "random_state": 0
+      }
+    },
+    "et": {
+      "kind": "et",
+      "params": {
+        "n_estimators": 160,
+        "max_depth": null,
+        "min_samples_leaf": 2,
+        "random_state": 42,
+        "n_jobs": 16
+      }
+    },
+    "et320": {
+      "kind": "et",
+      "params": {
+        "n_estimators": 320,
+        "max_depth": null,
+        "min_samples_leaf": 1,
+        "random_state": 42,
+        "n_jobs": 16
+      }
+    },
+    "rf": {
+      "kind": "rf",
+      "params": {
+        "n_estimators": 160,
+        "max_depth": 10,
+        "min_samples_leaf": 2,
+        "random_state": 42,
+        "n_jobs": 16
+      }
+    },
+    "rf320": {
+      "kind": "rf",
+      "params": {
+        "n_estimators": 320,
+        "max_depth": 14,
+        "min_samples_leaf": 1,
+        "random_state": 42,
+        "n_jobs": 16
+      }
+    }
+  },
+  "calibrator_selection": {
+    "default_family": "rf",
+    "small_scale_search_max_scale": 0,
+    "candidate_families": [
+      "rf"
+    ],
+    "analytical_per_op_candidate_families": [
+      "rf"
+    ],
+    "analytical_per_op_small_scale_search_max_scale": 0
+  },
+  "sampler": {
+    "search_max_scale": 5,
+    "candidate_count": 10,
+    "candidate_seed_stride": 97,
+    "candidate_pool_split": "train",
+    "proxy_split": "val"
+  },
+  "default_assets": {
+    "source_dataset": "data/source_kunpeng920_dataset3",
+    "target_dataset": "data/target_s920x20_dataset_all_78910_2_nodrop",
+    "source_hw": "hw_config/kunpeng920_single_numa.yaml",
+    "target_hw": "hw_config/s920x20_single_numa.yaml"
+  }
+}

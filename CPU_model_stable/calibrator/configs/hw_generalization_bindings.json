@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "policy": "joint_6d_tuple",
+  "split_name": "source_kunpeng920_dataset3_unseen_joint_6d_tuple",
+  "metadata_policy": "actual_hardware_binding_overrides_stale_dataset_metadata",
+  "datasets": {
+    "s920x20_local": {
+      "data_root": "../../data/data_e2e_small_1_16_staticfix_20260428_portable",
+      "hw_config": "../hw_config/s920x20_single_numa.yaml",
+      "actual_hardware": "s920x20_single_numa",
+      "metadata_note": "Collected on the local S920X20 machine. Portable CSV metadata may still say kunpeng920_single_numa."
+    },
+    "kunpeng920_remote": {
+      "data_root": "../../data/kunpeng920_data/data_e2e_small_1_16",
+      "hw_config": "../hw_config/kunpeng920_single_numa.yaml",
+      "actual_hardware": "kunpeng920_single_numa",
+      "metadata_note": "Collected on the remote Kunpeng920 machine and copied into this workspace."
+    }
+  }
+}

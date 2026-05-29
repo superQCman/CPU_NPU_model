@@ -1,0 +1,30 @@
+# Portable pip requirements for CPU_model_stable.
+#
+# Usage on a new machine:
+#   conda activate ort  # optional, if you use conda
+#   python -m pip install -r env/requirements.txt
+#
+# This file intentionally excludes machine-local wheels, PyTorch wheels, and
+# vendor Ascend/NPU runtime packages. PyTorch is needed only for DLRM ONNX/data
+# generation and legacy MLP baselines; install a platform-compatible PyTorch
+# separately before running those paths.
+
+numpy>=1.26
+pandas>=2.2,<4.0
+scipy>=1.11
+scikit-learn>=1.4
+joblib>=1.3
+PyYAML>=6.0
+matplotlib>=3.8
+networkx>=3.2
+tqdm>=4.66
+psutil>=5.9
+packaging>=23.0
+
+# ONNX/ORT profiling and static graph utilities.
+onnx>=1.16
+onnxruntime>=1.18
+
+# Optional baseline packages such as PyTorch/XGBoost/LightGBM/CatBoost are not
+# required by the current mainline RF route and are deliberately not installed
+# by default to keep migration deterministic across CPU architectures.

@@ -1,0 +1,33 @@
+{
+  "model_type": "dlrm_multiconfig_a2a_async_overlap_calibration",
+  "created_at": "2026-05-26T16:28:03",
+  "source": "data/profiler/dlrm_sweep",
+  "params": {
+    "eta": 1.0,
+    "launch_overhead_us": 0.0,
+    "sync_overhead_us": 0.0,
+    "overlap_window_scale": 1.0
+  },
+  "observed_metrics": {
+    "traces_found": 1452,
+    "cases_used": 1244,
+    "steps_used": 1244,
+    "min_comm_us": 1000.0,
+    "eta_mean": 0.6346951551643675,
+    "eta_median": 1.0,
+    "eta_p10": 0.23059289965402835,
+    "eta_p90": 1.0,
+    "comm_mean_us": 1804397.3058199356,
+    "compute_mean_us": 255.303922829582,
+    "bounded_overlap_mean_us": 160.0826205787761,
+    "hidden_fraction_bounded_mean": 0.002450783555535047,
+    "speedup_bounded_mean": 1.0024495047141224,
+    "model_bounded_mape_percent": 0.026843577430677425,
+    "model_bounded_rmse_us": 137.2612989708962,
+    "model_bounded_p90_rel_err_percent": 0.028431223698001985
+  },
+  "notes": [
+    "Calibrated from Ascend step_trace_time.csv Computing/Communication/Overlapped columns across DLRM sweep cases.",
+    "Final delivery reports bounded overlap because it matches the async hiding model and avoids profiler-aggregation artifacts."
+  ]
+}

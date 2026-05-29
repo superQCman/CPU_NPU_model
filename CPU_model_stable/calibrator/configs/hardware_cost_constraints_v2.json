@@ -1,0 +1,303 @@
+{
+  "schema_version": 1,
+  "source_doc": "docs/参数约束v2.docx",
+  "cost_model": "reference_v2_two_point_power_law",
+  "baseline_cost_wan": 8.0,
+  "baseline_device": "Device_1 / 智算平台",
+  "notes": [
+    "Each cost point is interpreted as whole-server reference cost when only that parameter changes.",
+    "Parameter costs are normalized before group aggregation to avoid adding 25 whole-server anchors.",
+    "x13 memory.bandwidth_gb_s_total keeps the strict doc value {40, 6w; 100, 8.5w}; this is the only confirmed non-8w low reference point.",
+    "cache.cacheline_bytes is recorded for completeness but is not optimized by default."
+  ],
+  "groups": {
+    "core": {"label": "B1 Core/Frequency", "weight": 0.25},
+    "pipeline": {"label": "B2 Pipeline/Uarch Width", "weight": 0.10},
+    "vector": {"label": "B3 SIMD/FP Execution", "weight": 0.15},
+    "memory": {"label": "B4 Memory Subsystem", "weight": 0.30},
+    "cache": {"label": "B5 Cache Hierarchy", "weight": 0.20}
+  },
+  "parameters": [
+    {
+      "id": "x1",
+      "field": "core.total_cores",
+      "group": "core",
+      "unit": "cores",
+      "range_min": 8,
+      "range_max": 64,
+      "baseline_value": 24,
+      "direction": "larger_is_costlier",
+      "cost_points": [{"value": 24, "cost_wan": 8.0}, {"value": 40, "cost_wan": 10.0}]
+    },
+    {
+      "id": "x2",
+      "field": "core.cpu_clock",
+      "group": "core",
+      "unit": "GHz",
+      "range_min": 2.0,
+      "range_max": 4.0,
+      "baseline_value": 2.6,
+      "direction": "larger_is_costlier",
+      "cost_points": [{"value": 2.6, "cost_wan": 8.0}, {"value": 2.9, "cost_wan": 8.5}]
+    },
+    {
+      "id": "x3",
+      "field": "pipeline.fetch_width",
+      "group": "pipeline",
+      "unit": "width",
+      "range_min": 2,
+      "range_max": 8,
+      "baseline_value": 6,
+      "direction": "larger_is_costlier",
+      "cost_points": [{"value": 6, "cost_wan": 8.0}, {"value": 6.42, "cost_wan": 8.5}]
+    },
+    {
+      "id": "x4",
+      "field": "pipeline.decode_width",
+      "group": "pipeline",
+      "unit": "width",
+      "range_min": 2,
+      "range_max": 8,
+      "baseline_value": 6,
+      "direction": "larger_is_costlier",
+      "cost_points": [{"value": 6, "cost_wan": 8.0}, {"value": 6.42, "cost_wan": 8.5}]
+    },
+    {
+      "id": "x5",
+      "field": "pipeline.rename_width",
+      "group": "pipeline",
+      "unit": "width",
+      "range_min": 2,
+      "range_max": 8,
+      "baseline_value": 6,
+      "direction": "larger_is_costlier",
+      "cost_points": [{"value": 6, "cost_wan": 8.0}, {"value": 6.42, "cost_wan": 8.5}]
+    },
+    {
+      "id": "x6",
+      "field": "pipeline.dispatch_width",
+      "group": "pipeline",
+      "unit": "width",
+      "range_min": 2,
+      "range_max": 8,
+      "baseline_value": 6,
+      "direction": "larger_is_costlier",
+      "cost_points": [{"value": 6, "cost_wan": 8.0}, {"value": 6.42, "cost_wan": 8.5}]
+    },
+    {
+      "id": "x7",
+      "field": "pipeline.issue_width",
+      "group": "pipeline",
+      "unit": "width",
+      "range_min": 2,
+      "range_max": 8,
+      "baseline_value": 6,
+      "direction": "larger_is_costlier",
+      "cost_points": [{"value": 6, "cost_wan": 8.0}, {"value": 6.42, "cost_wan": 8.5}]
+    },
+    {
+      "id": "x8",
+      "field": "pipeline.commit_width",
+      "group": "pipeline",
+      "unit": "width",
+      "range_min": 2,
+      "range_max": 8,
+      "baseline_value": 6,
+      "direction": "larger_is_costlier",
+      "cost_points": [{"value": 6, "cost_wan": 8.0}, {"value": 6.42, "cost_wan": 8.5}]
+    },
+    {
+      "id": "x9",
+      "field": "instruction.simd_width_bits",
+      "group": "vector",
+      "unit": "bits",
+      "range_min": 128,
+      "range_max": 2048,
+      "baseline_value": 128,
+      "direction": "larger_is_costlier",
+      "cost_points": [{"value": 128, "cost_wan": 8.0}, {"value": 256, "cost_wan": 9.0}]
+    },
+    {
+      "id": "x10",
+      "field": "instruction.fp_throughput_per_cycle.vector_sp_add",
+      "group": "vector",
+      "unit": "ops/cycle",
+      "range_min": 2,
+      "range_max": 4,
+      "baseline_value": 2,
+      "direction": "larger_is_costlier",
+      "cost_points": [{"value": 2, "cost_wan": 8.0}, {"value": 4, "cost_wan": 8.3}]
+    },
+    {
+      "id": "x11",
+      "field": "instruction.fp_throughput_per_cycle.vector_sp_mul",
+      "group": "vector",
+      "unit": "ops/cycle",
+      "range_min": 2,
+      "range_max": 4,
+      "baseline_value": 2,
+      "direction": "larger_is_costlier",
+      "cost_points": [{"value": 2, "cost_wan": 8.0}, {"value": 4, "cost_wan": 8.4}]
+    },
+    {
+      "id": "x12",
+      "field": "instruction.fp_throughput_per_cycle.vector_sp_fma",
+      "group": "vector",
+      "unit": "ops/cycle",
+      "range_min": 2,
+      "range_max": 4,
+      "baseline_value": 2,
+      "direction": "larger_is_costlier",
+      "cost_points": [{"value": 2, "cost_wan": 8.0}, {"value": 4, "cost_wan": 8.7}]
+    },
+    {
+      "id": "x13",
+      "field": "memory.bandwidth_gb_s_total",
+      "group": "memory",
+      "unit": "GB/s",
+      "range_min": 40,
+      "range_max": 400,
+      "baseline_value": 40,
+      "direction": "larger_is_costlier",
+      "strict_doc_value": true,
+      "notes": "Doc table gives range 100-400, but the cost pair explicitly uses 40 as the lower point; keep 40 to preserve the provided pair.",
+      "cost_points": [{"value": 40, "cost_wan": 6.0}, {"value": 100, "cost_wan": 8.5}]
+    },
+    {
+      "id": "x14",
+      "field": "memory.copy_bw_gb_s_1t",
+      "group": "memory",
+      "unit": "GB/s",
+      "range_min": 2,
+      "range_max": 80,
+      "baseline_value": 5,
+      "direction": "larger_is_costlier",
+      "cost_points": [{"value": 5, "cost_wan": 8.0}, {"value": 35, "cost_wan": 8.5}]
+    },
+    {
+      "id": "x15",
+      "field": "memory.copy_bw_gb_s_saturated",
+      "group": "memory",
+      "unit": "GB/s",
+      "range_min": 20,
+      "range_max": 800,
+      "baseline_value": 30,
+      "direction": "larger_is_costlier",
+      "cost_points": [{"value": 30, "cost_wan": 8.0}, {"value": 140, "cost_wan": 8.5}]
+    },
+    {
+      "id": "x16",
+      "field": "memory.random_gather_bw_gb_s_1t",
+      "group": "memory",
+      "unit": "GB/s",
+      "range_min": 0.5,
+      "range_max": 8,
+      "baseline_value": 1.0,
+      "direction": "larger_is_costlier",
+      "cost_points": [{"value": 1.0, "cost_wan": 8.0}, {"value": 2.5, "cost_wan": 8.4}]
+    },
+    {
+      "id": "x17",
+      "field": "memory.random_gather_bw_gb_s_saturated",
+      "group": "memory",
+      "unit": "GB/s",
+      "range_min": 2,
+      "range_max": 40,
+      "baseline_value": 4,
+      "direction": "larger_is_costlier",
+      "cost_points": [{"value": 4, "cost_wan": 8.0}, {"value": 20, "cost_wan": 8.3}]
+    },
+    {
+      "id": "x18",
+      "field": "memory.local_mem_delay_ns",
+      "group": "memory",
+      "unit": "ns",
+      "range_min": 50,
+      "range_max": 100,
+      "baseline_value": 90,
+      "direction": "smaller_is_costlier",
+      "cost_points": [{"value": 90, "cost_wan": 8.0}, {"value": 80, "cost_wan": 8.1}]
+    },
+    {
+      "id": "x19",
+      "field": "cache.cacheline_bytes",
+      "group": "cache",
+      "unit": "bytes",
+      "range_min": 64,
+      "range_max": 512,
+      "baseline_value": 64,
+      "direction": "larger_is_costlier",
+      "optimized": false,
+      "cost_points": [{"value": 64, "cost_wan": 8.0}, {"value": 128, "cost_wan": 8.7}]
+    },
+    {
+      "id": "x20",
+      "field": "cache.l1d.size",
+      "group": "cache",
+      "unit": "KiB",
+      "model_value_divisor": 1024,
+      "range_min": 64,
+      "range_max": 512,
+      "baseline_value": 64,
+      "direction": "larger_is_costlier",
+      "cost_points": [{"value": 64, "cost_wan": 8.0}, {"value": 128, "cost_wan": 9.2}]
+    },
+    {
+      "id": "x21",
+      "field": "cache.l2.size",
+      "group": "cache",
+      "unit": "KiB",
+      "model_value_divisor": 1024,
+      "range_min": 512,
+      "range_max": 4096,
+      "baseline_value": 512,
+      "direction": "larger_is_costlier",
+      "cost_points": [{"value": 512, "cost_wan": 8.0}, {"value": 1024, "cost_wan": 9.0}]
+    },
+    {
+      "id": "x22",
+      "field": "cache.l3_per_die.size",
+      "group": "cache",
+      "unit": "MiB",
+      "model_value_divisor": 1048576,
+      "range_min": 24,
+      "range_max": 160,
+      "baseline_value": 24,
+      "direction": "larger_is_costlier",
+      "cost_points": [{"value": 24, "cost_wan": 8.0}, {"value": 48, "cost_wan": 8.7}]
+    },
+    {
+      "id": "x23",
+      "field": "cache.l1d.response_latency_cycles",
+      "group": "cache",
+      "unit": "cycles",
+      "range_min": 1,
+      "range_max": 20,
+      "baseline_value": 13,
+      "direction": "smaller_is_costlier",
+      "cost_points": [{"value": 13, "cost_wan": 8.0}, {"value": 11, "cost_wan": 8.6}]
+    },
+    {
+      "id": "x24",
+      "field": "cache.l2.response_latency_cycles",
+      "group": "cache",
+      "unit": "cycles",
+      "range_min": 1,
+      "range_max": 60,
+      "baseline_value": 30,
+      "direction": "smaller_is_costlier",
+      "cost_points": [{"value": 30, "cost_wan": 8.0}, {"value": 25, "cost_wan": 8.4}]
+    },
+    {
+      "id": "x25",
+      "field": "cache.l3_per_die.response_latency_cycles",
+      "group": "cache",
+      "unit": "cycles",
+      "range_min": 1,
+      "range_max": 160,
+      "baseline_value": 126,
+      "direction": "smaller_is_costlier",
+      "cost_points": [{"value": 126, "cost_wan": 8.0}, {"value": 107, "cost_wan": 8.2}]
+    }
+  ]
+}
