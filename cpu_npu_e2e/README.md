@@ -12,7 +12,7 @@
 快速运行：
 
 ```bash
-cd /data/qc/CPU_NPU/cpu_npu_e2e
+cd cpu_npu_e2e
 python -m cpu_npu_e2e.run_fused_e2e \
   --cpu-model-root ../CPU_model_stable \
   --npu-root ../npu_modeling \
@@ -43,7 +43,9 @@ python -m cpu_npu_e2e.run_fused_e2e \
 ```bash
 python -m cpu_npu_e2e.run_fused_e2e \
   --cases-config configs/e2e_test_cases.yaml \
-  --cpu-model-bundle /data/qc/dlrm/CPU_model_stable/outputs_2/outputs/cache_residency_worker_share_v3_full_s920x20_20260505/model_bundles/joint_6d_tuple_source_100_whitebox_family_prior_plus_physics_guarded_rf_v3.pkl \
+  --cpu-model-bundle ../CPU_model_stable/outputs/<cpu_run>/model_bundles/<cpu_bundle>.pkl \
   --no-cpu-static-fallback \
   --output-dir outputs/e2e_cases_strict_cpu
 ```
+
+CPU bundle 的生成和放置方式见 `../CPU_model_stable/docs_delivery/USER_GUIDE.md`；NPU artifact 口径见 `../npu_modeling/docs/USER_GUIDE.md`。验收方应把严格模式需要的 bundle 放在 `../CPU_model_stable/outputs/.../model_bundles/` 下，再使用上面的相对路径传入。

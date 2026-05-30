@@ -13,7 +13,7 @@
 目录关系：
 
 ```text
-/data/qc/CPU_NPU/
+CPU_NPU/
   CPU_model_stable/
   npu_modeling/
   alltoall_modeling/
@@ -27,7 +27,7 @@
 在交付目录执行：
 
 ```bash
-cd /data/qc/CPU_NPU/cpu_npu_e2e
+cd cpu_npu_e2e
 python -m pip install -e .
 ```
 
@@ -45,14 +45,12 @@ test -f ../alltoall_modeling/artifacts/models/dlrm_async_overlap_multiconfig_mod
 find ../CPU_model_stable/pipeline_artifacts -name op_shapes.csv | head
 ```
 
-如果 `npu_modeling/` 或 `alltoall_modeling/` 不存在，先在 `/data/qc/CPU_NPU` 下创建英文目录，再把 RAR 包内容解压进去：
+如果 `npu_modeling/` 或 `alltoall_modeling/` 不存在，先在仓库根目录下创建英文目录，再把本地 RAR 包内容解压进去。解压工具只要求在 `PATH` 中可用，不依赖固定安装位置：
 
 ```bash
-cd /data/qc/CPU_NPU
-mkdir /data/qc/CPU_NPU/npu_modeling
-mkdir /data/qc/CPU_NPU/alltoall_modeling
-/data/qc/anaconda3/bin/bsdtar -xf npu建模.rar -C /data/qc/CPU_NPU/npu_modeling --strip-components 1
-/data/qc/anaconda3/bin/bsdtar -xf alltoall建模.rar -C /data/qc/CPU_NPU/alltoall_modeling --strip-components 1
+mkdir -p npu_modeling alltoall_modeling
+bsdtar -xf npu建模.rar -C npu_modeling --strip-components 1
+bsdtar -xf alltoall建模.rar -C alltoall_modeling --strip-components 1
 ```
 
 ## 4. 路由配置
@@ -79,7 +77,7 @@ configs/cpu_npu_op_routing.yaml
 默认 smoke / shape-only 运行：
 
 ```bash
-cd /data/qc/CPU_NPU/cpu_npu_e2e
+cd cpu_npu_e2e
 python -m cpu_npu_e2e.run_fused_e2e \
   --cpu-model-root ../CPU_model_stable \
   --npu-root ../npu_modeling \
@@ -107,12 +105,12 @@ python -m cpu_npu_e2e.run_fused_e2e \
 
 当既没有 `--cpu-predictions` 也没有 `--cpu-model-bundle` 时，CPU-routed nodes 使用静态 fallback，仅用于 smoke、接口和调度验证；`summary.json` 中会标记 `cpu_static_fallback_used=true`。
 
-推荐的严格 CPU 接入口是 `CPU_model_stable` 训练后导出的 `model_bundles/*.pkl`。融合代码会从当前 `op_shapes.csv` 反推 DLRM 静态配置，调用 CPU 主线的 `full_graph_76` 静态推理，并严格校验 `node_idx/node_name/op_type` 与 E2E 图对齐：
+推荐的严格 CPU 接入口是 `CPU_model_stable` 训练后导出的 `model_bundles/*.pkl`。融合代码会从当前 `op_shapes.csv` 反推 DLRM 静态配置，调用 CPU 主线的 `full_graph_76` 静态推理，并严格校验 `node_idx/node_name/op_type` 与 E2E 图对齐。bundle 的生成、命名和放置方式见 `../CPU_model_stable/docs_delivery/USER_GUIDE.md`，NPU artifact 的口径见 `../npu_modeling/docs/USER_GUIDE.md`。
 
 ```bash
 python -m cpu_npu_e2e.run_fused_e2e \
   --shape-csv ../CPU_model_stable/pipeline_artifacts/source_kunpeng920_dataset3_unseen_arch_embedding_size/case_10_run_1_1/bs1056_nip2000/op_shapes.csv \
-  --cpu-model-bundle /data/qc/dlrm/CPU_model_stable/outputs_2/outputs/cache_residency_worker_share_v3_full_s920x20_20260505/model_bundles/joint_6d_tuple_source_100_whitebox_family_prior_plus_physics_guarded_rf_v3.pkl \
+  --cpu-model-bundle ../CPU_model_stable/outputs/<cpu_run>/model_bundles/<cpu_bundle>.pkl \
   --no-cpu-static-fallback \
   --output-dir outputs/strict_cpu_single
 ```
@@ -122,7 +120,7 @@ python -m cpu_npu_e2e.run_fused_e2e \
 ```bash
 python -m cpu_npu_e2e.run_fused_e2e \
   --cases-config configs/e2e_test_cases.yaml \
-  --cpu-model-bundle /data/qc/dlrm/CPU_model_stable/outputs_2/outputs/cache_residency_worker_share_v3_full_s920x20_20260505/model_bundles/joint_6d_tuple_source_100_whitebox_family_prior_plus_physics_guarded_rf_v3.pkl \
+  --cpu-model-bundle ../CPU_model_stable/outputs/<cpu_run>/model_bundles/<cpu_bundle>.pkl \
   --no-cpu-static-fallback \
   --output-dir outputs/e2e_cases_strict_cpu
 ```
@@ -169,7 +167,7 @@ fused_e2e_combo_metrics.csv::predicted_e2e_us
 运行测试：
 
 ```bash
-cd /data/qc/CPU_NPU/cpu_npu_e2e
+cd cpu_npu_e2e
 python -m pytest
 ```
 

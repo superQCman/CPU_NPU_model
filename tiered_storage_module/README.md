@@ -23,14 +23,14 @@
 三级存储示例：
 
 ```bash
-cd /data/qc/CPU_NPU/tiered_storage_module/code/dlrm_ascend
+cd tiered_storage_module/code/dlrm_ascend
 bash dist_dlrm.sh
 ```
 
 两级存储示例：
 
 ```bash
-cd /data/qc/CPU_NPU/tiered_storage_module/code/dlrm_ascend
+cd tiered_storage_module/code/dlrm_ascend
 python dlrm_s_pytorch.py \
   --inference-only \
   --use-two-level-embedding \
@@ -40,7 +40,7 @@ python dlrm_s_pytorch.py \
 Reuse-distance 分析示例：
 
 ```bash
-cd /data/qc/CPU_NPU/tiered_storage_module/code/dlrm_ascend
+cd tiered_storage_module/code/dlrm_ascend
 python reuse_distance.py \
   --num-embeddings 100000 \
   --trace-length 500000 \
@@ -50,4 +50,3 @@ python reuse_distance.py \
 ```
 
 完整参数和输出日志格式见 `docs_delivery/USER_GUIDE.md`。
-

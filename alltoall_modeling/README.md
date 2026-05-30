@@ -28,7 +28,7 @@
 训练和 size-holdout 验证：
 
 ```bash
-cd /data/qc/CPU_NPU/alltoall_modeling
+cd alltoall_modeling
 python3 scripts/run_model_pipeline.py \
   --raw-data data/raw/a2a_32kb_aligned.txt \
   --split-mode size_holdout \
@@ -38,7 +38,7 @@ python3 scripts/run_model_pipeline.py \
 异步 overlap 验证：
 
 ```bash
-cd /data/qc/CPU_NPU/alltoall_modeling
+cd alltoall_modeling
 python3 scripts/run_async_overlap_validation.py
 ```
 

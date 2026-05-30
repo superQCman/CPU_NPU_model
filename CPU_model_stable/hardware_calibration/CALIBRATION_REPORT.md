@@ -97,7 +97,7 @@ Primary evidence:
 
 ## 2026-04-21 Local Whitebox Add-On Measurements
 
-These measurements were added to close the hard-policy whitebox prior loop on the local source host. They come from the dedicated OpenMP microbenches under `hardware_calibration/tools/` after rebuilding them into `/tmp/cross_hw_whitebox_build/` on `2026-04-21`.
+These measurements were added to close the hard-policy whitebox prior loop on the local source host. They come from the dedicated OpenMP microbenches under `hardware_calibration/tools/` after rebuilding them in a temporary build directory on `2026-04-21`.
 
 | Parameter | Local Kunpeng-920 | Evidence |
 | --- | ---: | --- |
@@ -119,7 +119,7 @@ These values are written directly into `hw_config/kunpeng920_single_numa.yaml` a
 
 ## 2026-04-27 Remote Whitebox Add-On Measurements
 
-These measurements were added to bring the remote target profile to the same whitebox hardware contract as the local source profile. The three OpenMP microbenches were first compiled in `/tmp/codex_s920x20_hw_addon/` on the S920X20 host and run with NUMA node 0 CPU and memory binding. They were rechecked later on 2026-04-27 with the full host-local reproducibility wrapper under `hardware_calibration/raw/remote_recheck_20260427_3run/`; the values below use that 3-run median recheck.
+These measurements were added to bring the remote target profile to the same whitebox hardware contract as the local source profile. The three OpenMP microbenches were first compiled in a temporary build directory on the S920X20 host and run with NUMA node 0 CPU and memory binding. They were rechecked later on 2026-04-27 with the full host-local reproducibility wrapper under `hardware_calibration/raw/remote_recheck_20260427_3run/`; the values below use that 3-run median recheck.
 
 | Parameter | Remote S920X20 | Evidence |
 | --- | ---: | --- |

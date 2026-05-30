@@ -57,7 +57,7 @@ calibrator/hw_config
 生产使用建议走自动入口：
 
 ```bash
-/data/qc/miniconda3/envs/ort/bin/python hardware_calibration/scripts/auto_calibrate_hw_config.py \
+python hardware_calibration/scripts/auto_calibrate_hw_config.py \
   --profile-name <profile> \
   --numa-node 0 \
   --repeats 5 \

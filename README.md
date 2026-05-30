@@ -21,13 +21,21 @@
 - `npu_modeling/results/physical_memory_models.joblib.gz` 中的 NPU 算子模型。
 - `alltoall_modeling/artifacts/models/*.json` 中的 All-to-All 通信与异步 overlap 参数。
 
-推荐的严格模式运行命令：
+推荐的基础验收命令从仓库根目录进入 `cpu_npu_e2e/` 后执行，所有输入都来自本仓库内的相对路径：
 
 ```bash
-cd /data/qc/CPU_NPU/cpu_npu_e2e
+cd cpu_npu_e2e
 python -m cpu_npu_e2e.run_fused_e2e \
   --cases-config configs/e2e_test_cases.yaml \
-  --cpu-model-bundle /data/qc/dlrm/CPU_model_stable/outputs_2/outputs/cache_residency_worker_share_v3_full_s920x20_20260505/model_bundles/joint_6d_tuple_source_100_whitebox_family_prior_plus_physics_guarded_rf_v3.pkl \
+  --output-dir outputs/e2e_cases
+```
+
+严格 CPU bundle 模式需要先按 `CPU_model_stable/docs_delivery/USER_GUIDE.md` 生成或放置项目内 bundle，再传入相对路径：
+
+```bash
+python -m cpu_npu_e2e.run_fused_e2e \
+  --cases-config configs/e2e_test_cases.yaml \
+  --cpu-model-bundle ../CPU_model_stable/outputs/<cpu_run>/model_bundles/<cpu_bundle>.pkl \
   --no-cpu-static-fallback \
   --output-dir outputs/e2e_cases_strict_cpu
 ```
@@ -46,6 +54,7 @@ python -m cpu_npu_e2e.run_fused_e2e \
 | `cpu_npu_e2e/README.md` | 端到端融合模型快速入口。 |
 | `cpu_npu_e2e/docs_delivery/USER_GUIDE.md` | 端到端模型使用说明、输入输出和验收方式。 |
 | `cpu_npu_e2e/docs_delivery/INTERNAL_PRINCIPLES.md` | CPU/NPU 路由、NPU 特征适配、All-to-All overlap 和 DAG 调度原理。 |
+| `CPU_model_stable/docs_delivery/USER_GUIDE.md` | CPU 模型训练、评估、静态推理和 bundle 生成说明。 |
+| `npu_modeling/docs/USER_GUIDE.md` | NPU 模型 artifact、训练复现和验证说明。 |
 | `tiered_storage_module/README.md` | 分级存储模块的中文入口和融合边界说明。 |
 | `alltoall_modeling/README.md` | All-to-All 建模模块的中文入口。 |
-
