@@ -131,12 +131,13 @@ dmypy.json
 # Pyre type checker
 .pyre/
 
-# Keep the small sample inputs delivered with this module.
-!input/
-!input/*.log
-
 # pytype static type analyzer
 .pytype/
 
 # Cython debug symbols
 cython_debug/
+
+# Project delivery excludes local assistant state and retains sample inputs.
+.claude/
+!input/
+!input/*.log

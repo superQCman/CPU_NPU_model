@@ -28,6 +28,7 @@ whitebox_family_prior_plus_physics_guarded_rf_v3
 |---|---|
 | [USER_GUIDE.md](docs_delivery/USER_GUIDE.md) | 怎么使用：环境、数据绑定、训练评估、静态推理、趋势图、成本优化和排查 |
 | [INTERNAL_PRINCIPLES.md](docs_delivery/INTERNAL_PRINCIPLES.md) | 内部原理：Analytical prior、op-thread scale、physics-guarded RF、E2E pipeline 和趋势控制 |
+| [CPU_OPERATOR_PERFORMANCE_MODELING_DESIGN.md](docs_delivery/CPU_OPERATOR_PERFORMANCE_MODELING_DESIGN.md) | 第一阶段 CPU 算子性能建模方案：CPU 特征、Analytical Model、残差校准、精度耗时和代码说明 |
 | [SOURCE_MAPPING.md](docs_delivery/SOURCE_MAPPING.md) | 交付文档来源映射，便于从原始文档、代码和产物追溯事实 |
 
 `docs/` 保留为过程文档和历史细节，不作为第一入口。

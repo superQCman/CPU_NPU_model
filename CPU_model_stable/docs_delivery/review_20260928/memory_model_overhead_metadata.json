@@ -1,0 +1,39 @@
+{
+  "dataset": "/data/qc/dlrm/CPU_model_stable/data/data_e2e_full_kunpeng920_20260501_portable/source_kunpeng920_dataset3_unseen_joint_6d_tuple/e2e_test_raw.csv",
+  "hw_config": "/data/qc/CPU_NPU/CPU_model_stable/calibrator/hw_config/kunpeng920_single_numa.yaml",
+  "prior_variant": "ort_kernel_v3",
+  "seed": 20260803,
+  "repeats": 5,
+  "warmups": 1,
+  "sample_sizes": [
+    1,
+    76,
+    1024,
+    4096
+  ],
+  "available_random_rows": 4086,
+  "available_continuous_rows": 8172,
+  "static_preparation_seconds": 10.304068475961685,
+  "formal_equivalence": {
+    "status": "passed",
+    "comparison": "per_row_per_bound_max_absolute_difference",
+    "random_rows": 100,
+    "continuous_rows": 100,
+    "random_abs_diff": 0.0,
+    "continuous_abs_diff": 0.0
+  },
+  "python_version": "3.13.5",
+  "python_implementation": "CPython",
+  "machine": "aarch64",
+  "cpu_count": 192,
+  "checksums": {
+    "continuous_memory_1": 8071058.726007488,
+    "continuous_memory_76": 285753216.4273731,
+    "continuous_memory_1024": 3094819299.5711737,
+    "continuous_memory_4096": 12751461132.073984,
+    "random_memory_1": 1153231.17887846,
+    "random_memory_76": 109304413.35275494,
+    "random_memory_1024": 1478401347.1363792,
+    "random_memory_4096": 5959065171.787014
+  }
+}

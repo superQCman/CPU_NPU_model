@@ -348,6 +348,24 @@ CROSS_HW_RF_N_JOBS=128 python calibrator/run.py \
 
 训练完成后，可以只输入 DLRM 上层配置和模型 bundle，直接得到主线 v3 E2E latency。该入口不读取 profile 生成的静态算子特征、shape CSV 或 timeline CSV。
 
+如果只需要查看 DLRM 上层参数如何映射到各个算子规模特征，不加载模型 bundle、不做 latency 预测，可以运行独立映射脚本：
+
+```bash
+python standalone_demos/dlrm_operator_scale_mapping/dlrm_operator_scale_mapping_demo.py \
+  --batch-size 1024 \
+  --num-indices-per-lookup 1000 \
+  --arch-embedding-size 25600 \
+  --arch-mlp-bot 400-300-200 \
+  --arch-mlp-top 1600-800-1 \
+  --inter-threads 1 \
+  --num-threads 3 \
+  --out-dir outputs/static_mapping_explain_smoke
+```
+
+该脚本输出 `dlrm_static_op_shapes_full_graph_76.csv`、`dlrm_static_features_full_graph_76.csv`、`dlrm_static_model_input_51.csv` 和 `dlrm_operator_scale_mapping_summary.csv/json`。其中 summary 会列出每个算子的 shape、Gemm M/N/K、MAC 数、lookup count、reduction work items 和 I/O bytes。该 demo 只使用 Python 标准库，不依赖项目内其他脚本，不接入主模型推理链路。
+
+训练后性能模型推理命令如下：
+
 ```bash
 python calibrator/static_feature_mapping/predict_from_config.py \
   --model-bundle outputs/cache_residency_worker_share_v3_full_s920x20_20260505/model_bundles/joint_6d_tuple_source_100_whitebox_family_prior_plus_physics_guarded_rf_v3.pkl \
@@ -498,6 +516,41 @@ python calibrator/plot_operator_class_mape.py \
   --out-dir outputs/operator_class_mape_cache_residency_worker_share_20260505 \
   --split-gather
 ```
+
+### 7.3.1 图聚合任务精度与相对误差 CDF
+
+该实验输出两种统计口径：逐个计算图任务按直接依赖关系将 `Shape`、`Unsqueeze`、`Flatten`、`Reshape`、`Add` 和 `Mul` 归入相邻的数据处理节点；四类执行阶段则按原节点名称前缀划分 embedding、bottom MLP、interaction 和 top MLP。两者均先对组内实测耗时和预测耗时分别求和，再计算 APE；本节 CDF 使用四类执行阶段口径。该过程只读取已有预测结果，不训练、不重拟合，也不改变主线预测。
+
+```bash
+TASK_CLASS_OUT=outputs/dlrm_task_class_mape_repro
+
+python calibrator/calculate_graph_task_mape.py \
+  --graph-shape-csv data/data_e2e_full_kunpeng920_20260501_portable/source_kunpeng920_dataset3_unseen_joint_6d_tuple/portable_artifacts/case_10_run_1_1/bs1024_nip1800/op_shapes/op_shapes_1024_1800.csv \
+  --device1-prediction-rows outputs/cache_residency_worker_share_v3_full_kunpeng920_20260505/prediction_error_rows.csv \
+  --device2-prediction-rows outputs/cache_residency_worker_share_v3_full_s920x20_20260505/prediction_error_rows.csv \
+  --route whitebox_family_prior_plus_physics_guarded_rf_v3 \
+  --out-dir "$TASK_CLASS_OUT"
+
+python calibrator/plot_task_class_relative_error_cdf.py \
+  --task-prediction-rows "$TASK_CLASS_OUT/dlrm_task_class_prediction_rows.csv" \
+  --threshold 0.10,0.15 \
+  --out-dir "$TASK_CLASS_OUT/task_class_cdf"
+```
+
+主要输出：
+
+```text
+dlrm_task_class_mape_summary.csv
+dlrm_task_class_prediction_rows.csv
+dlrm_task_class_relative_error_cdf.png
+dlrm_task_class_relative_error_cdf.pdf
+dlrm_task_class_relative_error_cdf_summary.csv
+DLRM_TASK_CLASS_RELATIVE_ERROR_CDF_REPORT.md
+```
+
+脚本会保留 MAPE 达到或超过 15% 的结果，并打印告警，便于诊断。
+
+正式结果中，四类任务在 Device_1 的 MAPE 为 5.42% 至 9.52%，在 Device_2 为 3.56% 至 8.49%。在 15% 相对误差阈值内，Device_1 各任务类别的样本覆盖率为 79.7% 至 95.8%，Device_2 为 81.5% 至 94.7%。`dlrm_task_class_relative_error_cdf_summary.csv` 保存每类任务的 MAPE、P90/P95 APE 和阈值覆盖率。
 
 ### 7.4 batch、并行度和算子规模误差切片
 
@@ -657,6 +710,31 @@ STATIC_INFERENCE_BULK_LATENCY_REPORT.md
 
 ```text
 outputs/static_inference_bulk_latency_benchmark_20260507
+```
+
+### 7.6.1 白盒访存模块 CPU 计算开销
+
+该实验测量已完成静态特征准备后，白盒连续访存和随机访存方程在 CPU 上的计算开销。它不是硬件 Cache/DRAM 实测访问延迟，也不包含 CSV 读取、静态特征展开、模型 bundle 加载或随机森林推理。连续访存部分覆盖带宽曲线、并发争用和数据搬运服务时间；随机访存部分覆盖 `Gather` 的随机带宽、缓存层级延迟、未命中并行度和 ORT Gather 内核带宽重标定。
+
+```bash
+python calibrator/benchmark_memory_model_overhead.py \
+  --dataset data/data_e2e_full_kunpeng920_20260501_portable/source_kunpeng920_dataset3_unseen_joint_6d_tuple/e2e_test_raw.csv \
+  --hw-config calibrator/hw_config/kunpeng920_single_numa.yaml \
+  --sample-sizes 1,76,1024,4096 \
+  --repeats 200 \
+  --warmups 20 \
+  --out-dir outputs/memory_model_overhead
+```
+
+脚本仅支持 `ort_kernel_v3`，连续访存包含 ReduceSum 的内核带宽修正，并将仅改变视图的 Transpose 搬运量置零。一致性校验逐行比较上下界和中心值，避免汇总求和掩盖偏差；默认校验通过后才写出结果。`--skip-equivalence-check` 会显式记录跳过状态，仅供诊断。历史 20260803 耗时来自修正前脚本，不能代表当前实现；当前开销应以上述命令重新测量。
+
+主要输出：
+
+```text
+memory_model_overhead_summary.csv
+memory_model_overhead_samples.csv
+memory_model_overhead_metadata.json
+memory_model_overhead_report.md
 ```
 
 ### 7.7 随机访存延迟验证

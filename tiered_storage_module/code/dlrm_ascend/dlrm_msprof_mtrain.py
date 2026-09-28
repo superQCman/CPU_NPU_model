@@ -23,27 +23,26 @@ import time  # 引入时间模块
 
 class SSDStorage:
     """SSD存储层"""
-    def __init__(self, db_path: str = "./embedding_ssd_cache"):
-        self.db_path = db_path
-        os.makedirs(db_path, exist_ok=True)
-        self._storage: Dict[int, torch.Tensor] = {}
-        self._lock = threading.RLock()
+    def __init__(self, num_embeddings: int, dim: int, path: str = "./embedding_table.bin"):
+        self.num_embeddings = num_embeddings
+        self.dim = dim
+        self.path = path
+        shape = (num_embeddings, dim)
+        if not os.path.exists(path):
+            # 创建稀疏文件: 只设置大小、不物理写满整块磁盘, OS 按需分配磁盘页
+            with open(path, "wb") as f:
+                f.seek(num_embeddings * dim * 4 - 1)
+                f.write(b"\0")
+        self._table = np.memmap(path, dtype=np.float32, mode="r+", shape=shape)
 
-    def get(self, key: int) -> Optional[torch.Tensor]:
-        with self._lock:
-            return self._storage.get(key)
+    def get_row(self, key: int) -> torch.Tensor:
+        """从磁盘读一行 (OS page cache 缓存热页)。返回 CPU float32 tensor。"""
+        row = np.array(self._table[key], dtype=np.float32, copy=True)
+        return torch.from_numpy(row)
 
-    def set(self, key: int, value: torch.Tensor):
-        with self._lock:
-            self._storage[key] = value.cpu()
-
-    def deferred_init(self, key: int, dim: int) -> torch.Tensor:
-        with self._lock:
-            if key not in self._storage:
-                data = torch.randn(dim) * 0.01
-                self._storage[key] = data
-                return data
-            return self._storage[key]
+    def set_row(self, key: int, value: torch.Tensor):
+        """写回一行到磁盘 (训练场景的更新写回)。"""
+        self._table[key] = value.detach().cpu().numpy()
 
 
 class LRUCache:
@@ -70,9 +69,14 @@ class LRUCache:
         return key in self._cache
 
 
+# 迁移事件时间表输出文件 (CSV)
+MIGRATION_LOG = "migration_schedule.log"
+
+
 class ThreeLevelEmbedding(nn.Module):
     """三级存储Embedding: HBM -> DRAM -> SSD"""
     _instances = []  # 注册所有实例，用于聚合统计
+    _next_table_id = 0  # 给每个表分配唯一 id，用于区分多表日志
 
     @classmethod
     def aggregate_stats(cls):
@@ -94,7 +98,10 @@ class ThreeLevelEmbedding(nn.Module):
         embedding_dim: int,
         hbm_ratio: float = 0.01,
         dram_cache_ratio: float = 0.05,
-        migration_interval: int = 100,
+        gamma: float = 0.9,
+        tau_high: float = 2.0,
+        tau_low: float = 0.5,
+        heat_epsilon: float = 1e-3,
         print_interval: int = 50,
     ):
         super().__init__()
@@ -102,31 +109,31 @@ class ThreeLevelEmbedding(nn.Module):
         self.num_embeddings = num_embeddings
         self.embedding_dim = embedding_dim
 
-        # 计算各级存储容量
+        # 各级容量 (行数)
         self.hbm_rows = max(1, int(num_embeddings * hbm_ratio))
         self.dram_rows = max(1, int(num_embeddings * dram_cache_ratio))
 
-        # Level 0: HBM存储 (动态冷热迁移)
-        if self.hbm_rows > 0:
-            hbm_weight = torch.empty(self.hbm_rows, embedding_dim)
-            nn.init.uniform_(hbm_weight, a=-0.01, b=0.01)
-            self.hbm_weight = nn.Parameter(hbm_weight, requires_grad=True)
-            # 当前 HBM 中存储的逻辑索引 (sorted，用于 searchsorted 定位)
-            self.hbm_indices = torch.arange(self.hbm_rows, dtype=torch.long)
-        else:
-            self.hbm_weight = None
-            self.hbm_indices = torch.empty(0, dtype=torch.long)
-
-        # 冷热迁移控制
-        self.migration_interval = migration_interval
+        # 热度模型参数 (指数衰减 + 阈值分级)
+        self.gamma = gamma              # 热度衰减因子 (每步)
+        self.tau_high = tau_high        # 热度升破此值 -> 预取晋升 HBM
+        self.tau_low = tau_low          # 热度跌破此值 -> 淘汰下沉 SSD
+        self.heat_epsilon = heat_epsilon  # 热度低于此值的 SSD 行剪枝
         self.print_interval = print_interval
-        self.access_freq: Dict[int, int] = {}
 
-        # Level 1: DRAM缓存
-        self.dram_cache = LRUCache(self.dram_rows)
+        # Level 0: HBM (初始占满前 hbm_rows 行, 后续由热度阈值动态调整)
+        hbm_weight = torch.empty(self.hbm_rows, embedding_dim)
+        nn.init.uniform_(hbm_weight, a=-0.01, b=0.01)
+        self.hbm_weight = nn.Parameter(hbm_weight, requires_grad=True)
+        self.hbm_indices = torch.arange(self.hbm_rows, dtype=torch.long)  # sorted
+
+        # 热度表: logical_idx -> heat (HBM/DRAM 行 + 近期访问过的 SSD 行)
+        self.heat: Dict[int, float] = {}
+
+        # Level 1: DRAM (热度管理缓存, 取代 LRU)
+        self.dram_data: Dict[int, torch.Tensor] = {}
 
         # Level 2: SSD存储
-        self.ssd_storage = SSDStorage()
+        self.ssd_storage = SSDStorage(num_embeddings, embedding_dim)
 
         # 统计 — 实例变量，每个 table 独立计数
         self.hbm_hits = 0
@@ -137,20 +144,23 @@ class ThreeLevelEmbedding(nn.Module):
         self.total_forward_times = {"SSD_to_DRAM": 0.0, "DRAM_to_CPU": 0.0, "DRAM_to_HBM": 0.0, "HBM_to_NPU": 0.0, "TOTAL_MEMORY_ACCESS": 0.0}
         self.total_forward_data = {"SSD_to_DRAM": 0.0, "DRAM_to_CPU": 0.0, "DRAM_to_HBM": 0.0, "HBM_to_NPU": 0.0, "TOTAL_MEMORY_ACCESS": 0.0}
 
+        self._table_id = ThreeLevelEmbedding._next_table_id
+        ThreeLevelEmbedding._next_table_id += 1
         ThreeLevelEmbedding._instances.append(self)
 
-        # 可选预热：把非 HBM 的索引预加载到 DRAM，避免首次 forward 产生 SSD 访问
-        # 注意：若 num_embeddings 很大，此操作会占用大量内存并增加初始化时间
+        # 预热: 前 hbm_rows 行视为初始热行 (heat=tau_high), 次 dram_rows 行预加载到 DRAM (heat=tau_low)
+        for k in range(self.hbm_rows):
+            self.heat[k] = self.tau_high
         preload_end = min(self.num_embeddings, self.hbm_rows + self.dram_rows)
         for k in range(self.hbm_rows, preload_end):
-            vec = self.ssd_storage.deferred_init(k, self.embedding_dim)
-            # 存入 DRAM 缓存（放到 CPU）
-            self.dram_cache.put(k, vec.cpu())
+            vec = self.ssd_storage.get_row(k)
+            self.dram_data[k] = vec.cpu()
+            self.heat[k] = self.tau_low
 
-        print(f"[MTrainS] Table {num_embeddings}: HBM={self.hbm_rows}, DRAM_cache={self.dram_rows}, SSD={num_embeddings - self.hbm_rows}")
+        print(f"[MTrainS] Table {num_embeddings}: HBM<={self.hbm_rows}, DRAM<={self.dram_rows}, SSD={num_embeddings} "
+              f"(gamma={self.gamma}, tau_high={self.tau_high}, tau_low={self.tau_low})")
 
     def forward(self, indices: torch.Tensor) -> torch.Tensor:
-        print(f"[MTrainS] Forward called with {len(indices)} indices")
         device = indices.device
         n = len(indices)
         byte_per_elem = 4  # float32
@@ -160,7 +170,7 @@ class ThreeLevelEmbedding(nn.Module):
 
         output = torch.empty(n, self.embedding_dim, device=device)
 
-        # --- Level 0: HBM 命中 (向量化批量 gather，动态索引) ---
+        # --- Level 0: HBM 命中 (向量化批量 gather) ---
         hbm_idx = self.hbm_indices.to(device)
         hbm_mask = torch.isin(indices, hbm_idx)
         if hbm_mask.any():
@@ -174,7 +184,7 @@ class ThreeLevelEmbedding(nn.Module):
             self.total_forward_data["HBM_to_NPU"] += cnt * self.embedding_dim * byte_per_elem
             self.hbm_hits += cnt
 
-        # --- Level 1+2: DRAM 缓存 / SSD ---
+        # --- Level 1+2: DRAM / SSD ---
         non_hbm_mask = ~hbm_mask
         if non_hbm_mask.any():
             non_hbm_pos = torch.where(non_hbm_mask)[0]
@@ -186,7 +196,7 @@ class ThreeLevelEmbedding(nn.Module):
             ssd_miss_idx = []   # actual embedding row index
 
             for i, idx in enumerate(non_hbm_idx_list):
-                vec = self.dram_cache.get(idx)
+                vec = self.dram_data.get(idx)
                 if vec is not None:
                     dram_hit_pos.append(i)
                     dram_hit_vecs.append(vec)
@@ -206,103 +216,214 @@ class ThreeLevelEmbedding(nn.Module):
                 self.total_forward_data["DRAM_to_CPU"] += cnt * self.embedding_dim * byte_per_elem
                 self.dram_hits += cnt
 
-            # SSD misses: 逐个加载 (冷数据，量小)
+            # SSD misses: 逐个加载 (冷数据，量小), 只读不算缓存填充 (SSD->DRAM 由迁移第3步统一预取)
             if ssd_miss_idx:
                 t0 = time.time()
                 for i, idx in zip(ssd_miss_pos, ssd_miss_idx):
-                    data = self.ssd_storage.deferred_init(idx, self.embedding_dim)
+                    data = self.ssd_storage.get_row(idx)
                     output[non_hbm_pos[i]] = data.to(device)
-                    self.dram_cache.put(idx, data.cpu())
                 elapsed = time.time() - t0
                 cnt = len(ssd_miss_idx)
                 self.total_forward_times["SSD_to_DRAM"] += elapsed
                 self.total_forward_data["SSD_to_DRAM"] += cnt * self.embedding_dim * byte_per_elem
                 self.ssd_hits += cnt
 
-        # 更新访问频率 (所有索引)
-        for idx in indices.cpu().tolist():
-            self.access_freq[idx] = self.access_freq.get(idx, 0) + 1
+        # --- 热度更新 (指数衰减 + 访问累加) ---
+        self._update_heat(indices.cpu().tolist())
 
         total_elapsed = time.time() - t_start
         self.total_forward_times["TOTAL_MEMORY_ACCESS"] += total_elapsed
         self.forward_count += 1
-        print(f"[MTrainS] Forward {self.forward_count}: Memory access time: {total_elapsed:.3f} s")
 
-        # 打印 4 段时间统计 (独立于迁移，由 print_interval 控制)
+        # --- 连续热度分级迁移 (淘汰/预取) ---
+        self._tier_migration(device)
+
         if self.forward_count % self.print_interval == 0:
-            print(f"[MTrainS] Forward {self.forward_count}: Total memory access time: {total_elapsed:.3f} s")
             self._print_timing_report()
-        self._print_timing_report()
-
-        # 周期性冷热迁移
-        if self.forward_count % self.migration_interval == 0:
-            print(f"[MTrainS] Forward {self.forward_count}: Starting migration...")
-            self._migrate(device)
-
-        self._migrate(device)
         return output
 
-    def _migrate(self, device):
-        """按访问频率重新分配 HBM 空间: 驱逐冷数据到 DRAM，提升热数据到 HBM"""
-        if not self.access_freq or self.hbm_weight is None:
+    def _update_heat(self, accessed_list):
+        """热度更新: 全局指数衰减 + 访问累加 + 冷 SSD 行剪枝。"""
+        for idx in self.heat:
+            self.heat[idx] *= self.gamma
+        for idx in accessed_list:
+            self.heat[idx] = self.heat.get(idx, 0.0) + 1.0
+        hbm_set = set(self.hbm_indices.tolist())
+        for idx in list(self.heat.keys()):
+            if (self.heat[idx] < self.heat_epsilon
+                    and idx not in hbm_set and idx not in self.dram_data):
+                del self.heat[idx]
+
+    def _tier_migration(self, device):
+        """热度阈值驱动的连续淘汰/预取 (逐级迁移, 不越级)。各链路分开计时。"""
+        byte_per_elem = 4
+        old_hbm_idx = self.hbm_indices
+        old_hbm_set = set(old_hbm_idx.tolist())
+        hbm_set = set(old_hbm_set)  # 工作副本, 最终成为新 HBM 集合
+
+        # 各链路分开计数/计时
+        n_hbm_to_dram = 0; t_hbm_to_dram = 0.0   # 淘汰: device->host 拷贝
+        n_ssd_to_dram = 0; t_ssd_to_dram = 0.0   # 预取: SSD 读入 DRAM
+        n_dram_to_ssd = 0                        # 下沉: 丢弃缓存副本 (无物理拷贝)
+
+        # 1. 淘汰 HBM -> DRAM: 热度跌破 tau_high (物理拷贝 device->host)
+        for idx in list(hbm_set):
+            if self.heat.get(idx, 0.0) < self.tau_high:
+                t0 = time.time()
+                pos = int(torch.searchsorted(old_hbm_idx, torch.tensor(idx)))
+                self.dram_data[idx] = self.hbm_weight[pos].detach().cpu()
+                t_hbm_to_dram += time.time() - t0
+                n_hbm_to_dram += 1
+                hbm_set.discard(idx)
+
+        # 2. 淘汰 DRAM -> SSD: 热度跌破 tau_low (丢弃缓存副本, SSD 仍是真源)
+        for idx in list(self.dram_data.keys()):
+            if self.heat.get(idx, 0.0) < self.tau_low:
+                self.dram_data.pop(idx, None)
+                self.heat.pop(idx, None)
+                n_dram_to_ssd += 1
+
+        # 3. 预取 SSD -> DRAM: 热度升破 tau_low、当前不在 HBM/DRAM 的行
+        for idx, h in list(self.heat.items()):
+            if h >= self.tau_low and idx not in hbm_set and idx not in self.dram_data:
+                t0 = time.time()
+                self.dram_data[idx] = self.ssd_storage.get_row(idx)
+                t_ssd_to_dram += time.time() - t0
+                n_ssd_to_dram += 1
+
+        # 4. 预取 DRAM -> HBM: 热度升破 tau_high (逐级, 只从 DRAM 晋升, 避免 SSD->HBM 越级)
+        #    这里只标记候选, 真正的 host->device 拷贝在 _rebuild_hbm 里统计
+        for idx in list(self.dram_data.keys()):
+            if self.heat.get(idx, 0.0) >= self.tau_high:
+                hbm_set.add(idx)
+
+        # 5. HBM 容量约束: 超出 hbm_rows 淘汰最冷 (区分旧 HBM 行与刚预取的行)
+        if len(hbm_set) > self.hbm_rows:
+            overflow = sorted(hbm_set, key=lambda i: self.heat.get(i, 0.0))[:len(hbm_set) - self.hbm_rows]
+            for idx in overflow:
+                if idx in old_hbm_set:
+                    # 旧 HBM 行: 拷贝回 DRAM
+                    t0 = time.time()
+                    pos = int(torch.searchsorted(old_hbm_idx, torch.tensor(idx)))
+                    self.dram_data[idx] = self.hbm_weight[pos].detach().cpu()
+                    t_hbm_to_dram += time.time() - t0
+                    n_hbm_to_dram += 1
+                # 否则是刚预取的行: 数据本就在 DRAM, 不产生拷贝, 也不计数
+                hbm_set.discard(idx)
+
+        # 6. DRAM 容量约束: 超出 dram_rows 淘汰最冷到 SSD (丢弃)
+        if len(self.dram_data) > self.dram_rows:
+            overflow = sorted(self.dram_data.keys(), key=lambda i: self.heat.get(i, 0.0))[:len(self.dram_data) - self.dram_rows]
+            for idx in overflow:
+                self.dram_data.pop(idx, None)
+                self.heat.pop(idx, None)
+                n_dram_to_ssd += 1
+
+        # 无任何物理移动则跳过
+        if (hbm_set == old_hbm_set and n_hbm_to_dram == 0
+                and n_ssd_to_dram == 0 and n_dram_to_ssd == 0):
             return
 
-        # 按频率降序，取 top-K 作为新 HBM 集合
-        sorted_items = sorted(self.access_freq.items(), key=lambda x: x[1], reverse=True)
-        top_indices = sorted([idx for idx, _ in sorted_items[:self.hbm_rows]])
+        # 7. 重建 HBM (DRAM->HBM 的 host->device 拷贝发生在这里, 顺带统计)
+        t_dram_to_hbm, n_dram_to_hbm, t_ssd_to_hbm, n_ssd_to_hbm = \
+            self._rebuild_hbm(device, sorted(hbm_set))
 
-        old_set = set(self.hbm_indices.tolist())
-        new_set = set(top_indices)
+        total_time = t_hbm_to_dram + t_dram_to_hbm + t_ssd_to_dram + t_ssd_to_hbm
+        data_bytes = (n_hbm_to_dram + n_dram_to_hbm + n_ssd_to_dram + n_ssd_to_hbm) * self.embedding_dim * byte_per_elem
 
-        evicted = old_set - new_set   # 从 HBM 驱逐 → DRAM
-        promoted = new_set - old_set  # 从 DRAM/SSD 晋升 → HBM
+        # 8. 阶段统计 (迁移总开销)
+        self.total_forward_times["DRAM_to_HBM"] += total_time
+        self.total_forward_data["DRAM_to_HBM"] += data_bytes
 
-        if not evicted and not promoted:
-            self._decay_freq()
-            return
+        # 9. 记录迁移事件 (各链路分开)
+        self._log_migration_event(
+            step=self.forward_count,
+            n_hbm_to_dram=n_hbm_to_dram, t_hbm_to_dram_s=t_hbm_to_dram,
+            n_dram_to_hbm=n_dram_to_hbm, t_dram_to_hbm_s=t_dram_to_hbm,
+            n_ssd_to_dram=n_ssd_to_dram, t_ssd_to_dram_s=t_ssd_to_dram,
+            n_dram_to_ssd=n_dram_to_ssd,
+            n_ssd_to_hbm=n_ssd_to_hbm, t_ssd_to_hbm_s=t_ssd_to_hbm,
+            data_bytes=data_bytes,
+            total_time_s=total_time,
+        )
 
-        old_hbm_idx = self.hbm_indices.to(device)
+    def _rebuild_hbm(self, device, new_hbm_sorted):
+        """按新的 HBM 逻辑索引集合重建 hbm_weight / hbm_indices。
 
-        # 驱逐: HBM → DRAM
-        for logical_idx in evicted:
-            pos = torch.searchsorted(
-                old_hbm_idx, torch.tensor(logical_idx, device=device)
-            )
-            self.dram_cache.put(logical_idx, self.hbm_weight[pos].detach().cpu())
+        Returns: (t_dram_to_hbm, n_dram_to_hbm, t_ssd_to_hbm, n_ssd_to_hbm)
+        即晋升进 HBM 的两类拷贝: DRAM->HBM (正常逐级) 与 SSD->HBM (兜底, 通常为 0)。
+        """
+        old_hbm_idx = self.hbm_indices
+        old_hbm_set = set(old_hbm_idx.tolist())
+        old_hbm_weight = self.hbm_weight
 
-        # 构建新的 HBM weight (保持 nn.Parameter 引用)
-        new_weight = torch.empty(self.hbm_rows, self.embedding_dim, device=device)
-        dram_to_hbm_time = 0.0
-        dram_to_hbm_bytes = 0
-        byte_per_elem = 4  # float32
+        new_weight = torch.empty(len(new_hbm_sorted), self.embedding_dim, device=device)
+        t_dram_to_hbm = 0.0; n_dram_to_hbm = 0
+        t_ssd_to_hbm = 0.0; n_ssd_to_hbm = 0
 
-        for new_pos, logical_idx in enumerate(top_indices):
-            if logical_idx in old_set:
-                old_pos = torch.searchsorted(
-                    old_hbm_idx, torch.tensor(logical_idx, device=device)
-                )
-                new_weight[new_pos] = self.hbm_weight[old_pos].detach()
+        for pos, idx in enumerate(new_hbm_sorted):
+            if idx in old_hbm_set:
+                old_pos = int(torch.searchsorted(old_hbm_idx, torch.tensor(idx)))
+                new_weight[pos] = old_hbm_weight[old_pos].detach()
             else:
-                vec = self.dram_cache.get(logical_idx)
+                # 晋升源应在 DRAM (逐级迁移); 兜底从 SSD 读
+                vec = self.dram_data.pop(idx, None)
+                t0 = time.time()
                 if vec is not None:
-                    t0 = time.time()
-                    new_weight[new_pos] = vec.to(device)
-                    dram_to_hbm_time += time.time() - t0
+                    new_weight[pos] = vec.to(device)          # DRAM -> HBM
+                    t_dram_to_hbm += time.time() - t0
+                    n_dram_to_hbm += 1
                 else:
-                    t0 = time.time()
-                    new_weight[new_pos] = self.ssd_storage.deferred_init(
-                        logical_idx, self.embedding_dim
-                    ).to(device)
-                    dram_to_hbm_time += time.time() - t0
-                dram_to_hbm_bytes += self.embedding_dim * byte_per_elem
+                    new_weight[pos] = self.ssd_storage.get_row(idx).to(device)  # SSD -> HBM
+                    t_ssd_to_hbm += time.time() - t0
+                    n_ssd_to_hbm += 1
 
-        self.total_forward_times["DRAM_to_HBM"] += dram_to_hbm_time
-        self.total_forward_data["DRAM_to_HBM"] += dram_to_hbm_bytes
+        # 动态容量: 重建 nn.Parameter (inference-only 场景安全)
+        self.hbm_weight = nn.Parameter(new_weight, requires_grad=True)
+        self.hbm_indices = torch.tensor(new_hbm_sorted, dtype=torch.long)
+        return t_dram_to_hbm, n_dram_to_hbm, t_ssd_to_hbm, n_ssd_to_hbm
 
-        self.hbm_weight.data.copy_(new_weight)
-        self.hbm_indices = torch.tensor(top_indices, dtype=torch.long)
-
-        self._decay_freq()
+    def _log_migration_event(self, step,
+                             n_hbm_to_dram, t_hbm_to_dram_s,
+                             n_dram_to_hbm, t_dram_to_hbm_s,
+                             n_ssd_to_dram, t_ssd_to_dram_s,
+                             n_dram_to_ssd,
+                             n_ssd_to_hbm, t_ssd_to_hbm_s,
+                             data_bytes, total_time_s):
+        """把一次迁移事件写入时间表: stdout 打印 + 追加到 CSV (各链路分开计时)。"""
+        print(
+            f"[Migration] table={self._table_id} step={step} "
+            f"hbm->dram={n_hbm_to_dram}({t_hbm_to_dram_s * 1e3:.3f}ms) "
+            f"dram->hbm={n_dram_to_hbm}({t_dram_to_hbm_s * 1e3:.3f}ms) "
+            f"ssd->dram={n_ssd_to_dram}({t_ssd_to_dram_s * 1e3:.3f}ms) "
+            f"dram->ssd={n_dram_to_ssd} "
+            f"ssd->hbm={n_ssd_to_hbm}({t_ssd_to_hbm_s * 1e3:.3f}ms) "
+            f"total={total_time_s * 1e3:.3f}ms"
+        )
+        try:
+            header = ("table_id,step,wall_time_s,"
+                      "n_hbm_to_dram,t_hbm_to_dram_s,"
+                      "n_dram_to_hbm,t_dram_to_hbm_s,"
+                      "n_ssd_to_dram,t_ssd_to_dram_s,"
+                      "n_dram_to_ssd,"
+                      "n_ssd_to_hbm,t_ssd_to_hbm_s,"
+                      "data_bytes,total_time_s")
+            new_file = (not os.path.exists(MIGRATION_LOG)
+                        or os.path.getsize(MIGRATION_LOG) == 0)
+            with open(MIGRATION_LOG, "a") as f:
+                if new_file:
+                    f.write(header + "\n")
+                f.write(
+                    f"{self._table_id},{step},{time.time():.6f},"
+                    f"{n_hbm_to_dram},{t_hbm_to_dram_s:.6f},"
+                    f"{n_dram_to_hbm},{t_dram_to_hbm_s:.6f},"
+                    f"{n_ssd_to_dram},{t_ssd_to_dram_s:.6f},"
+                    f"{n_dram_to_ssd},"
+                    f"{n_ssd_to_hbm},{t_ssd_to_hbm_s:.6f},"
+                    f"{data_bytes:.0f},{total_time_s:.6f}\n"
+                )
+        except Exception as e:
+            print(f"Warning: failed to write migration log: {e}")
 
     def _print_timing_report(self):
         """打印当前 4 段访存时间的统计报告"""
@@ -345,21 +466,13 @@ class ThreeLevelEmbedding(nn.Module):
             # don't crash training if logging fails; print a short notice
             print(f"Warning: failed to write memory access log: {e}")
 
-    def _decay_freq(self):
-        """衰减访问频率，保留近期热点，淘汰冷记录防止 dict 无限膨胀"""
-        new_freq: Dict[int, int] = {}
-        for idx, freq in self.access_freq.items():
-            decayed = freq // 2
-            if decayed > 0:
-                new_freq[idx] = decayed
-        self.access_freq = new_freq
-
 class MTrainSEmbeddingBag(nn.Module):
     """MTrainS版本的EmbeddingBag"""
 
     def __init__(self, num_embeddings: int, embedding_dim: int,
                  hbm_ratio: float = 0.01, dram_cache_ratio: float = 0.05,
-                 migration_interval: int = 100, print_interval: int = 50):
+                 gamma: float = 0.9, tau_high: float = 2.0, tau_low: float = 0.5,
+                 print_interval: int = 50):
         super().__init__()
 
         self.num_embeddings = num_embeddings
@@ -370,7 +483,9 @@ class MTrainSEmbeddingBag(nn.Module):
             embedding_dim=embedding_dim,
             hbm_ratio=hbm_ratio,
             dram_cache_ratio=dram_cache_ratio,
-            migration_interval=migration_interval,
+            gamma=gamma,
+            tau_high=tau_high,
+            tau_low=tau_low,
             print_interval=print_interval,
         )
 

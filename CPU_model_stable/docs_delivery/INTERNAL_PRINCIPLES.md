@@ -320,6 +320,19 @@ E2E pipeline 会把单算子预测放回图结构中排流水线，输出完整�
 
 `predicted_e2e_us` 使用 `model_input_51_observable_profiled_nodes` 口径。`full_graph_76` 用于审计完整静态图，不替代当前主线 E2E latency 口径。
 
+上层参数到算子规模的映射由 `calibrator/static_feature_mapping/core.py` 统一生成：
+
+| 上层参数 | 算子规模影响 |
+|---|---|
+| `arch_embedding_size` | 映射到 8 个 embedding table 的行数；单值输入会扩展为 8 个表 |
+| `batch_size * num_indices_per_lookup` | 形成每个 embedding branch 的 flattened indices 数量和 `Gather` lookup count |
+| `arch_mlp_bot` | 生成 bottom MLP 的 `Gemm` 输入/输出维度和 M/N/K |
+| interaction 固定结构 | 1 个 dense branch + 8 个 embedding branch 形成 9 路输入、`9x9` interaction matrix 和 36 个 pair features |
+| `arch_mlp_top` | 生成 top MLP 的 `Gemm` 输入/输出维度和 M/N/K |
+| `num_threads`, `inter_threads` | 写入静态特征行，用于线程尺度和 E2E 调度口径 |
+
+独立 demo `standalone_demos/dlrm_operator_scale_mapping/dlrm_operator_scale_mapping_demo.py` 可以只导出映射，不加载模型 bundle，不做 latency 预测。它显式定义完整 76 节点结构，只依赖 Python 标准库，输出完整 76 节点 shape 表、完整 76 节点特征表、51 节点模型输入表，以及面向审阅的算子规模 summary。静态映射行中的 `has_cpu_profile=0`、`shape_source=static_config` 表示该阶段不读取 profiling 数据、shape CSV 或 timeline CSV。
+
 ## 9. 趋势图机制
 
 multiworkload 硬件趋势图使用 synthetic controlled workload，不要求每张图固定同一个 DLRM 配置。该设计用于让不同硬件参数落在各自敏感区间。
