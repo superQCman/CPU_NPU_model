@@ -20,7 +20,7 @@ CPU_NPU/
   cpu_npu_e2e/
 ```
 
-`cpu_npu_e2e` 不修改 `CPU_model_stable`，只读取其 `pipeline_artifacts/**/op_shapes.csv` 和可选 CPU prediction CSV。
+`cpu_npu_e2e` 读取 CPU 的 `pipeline_artifacts/**/op_shapes.csv` 和正式 CPU bundle，或显式提供的 CPU prediction CSV。
 
 ## 2. 环境
 
@@ -38,6 +38,7 @@ python -m pip install -e .
 确认关键 artifact 存在：
 
 ```bash
+test -f ../CPU_model_stable/models/s920x20/joint_6d_tuple_source_100_whitebox_family_prior_plus_physics_guarded_rf_v3.pkl.xz
 test -f ../npu_modeling/results/physical_memory_models.joblib -o -f ../npu_modeling/results/physical_memory_models.joblib.gz
 test -f ../npu_modeling/models/hardware_descriptor.json
 test -f ../alltoall_modeling/artifacts/models/latency_model_params.json
@@ -105,12 +106,12 @@ python -m cpu_npu_e2e.run_fused_e2e \
 
 当既没有 `--cpu-predictions` 也没有 `--cpu-model-bundle` 时，CPU-routed nodes 使用静态 fallback，仅用于 smoke、接口和调度验证；`summary.json` 中会标记 `cpu_static_fallback_used=true`。
 
-推荐的严格 CPU 接入口是 `CPU_model_stable` 训练后导出的 `model_bundles/*.pkl`。融合代码会从当前 `op_shapes.csv` 反推 DLRM 静态配置，调用 CPU 主线的 `full_graph_76` 静态推理，并严格校验 `node_idx/node_name/op_type` 与 E2E 图对齐。bundle 的生成、命名和放置方式见 `../CPU_model_stable/docs_delivery/USER_GUIDE.md`，NPU artifact 的口径见 `../npu_modeling/docs/USER_GUIDE.md`。
+仓库已在 `CPU_model_stable/models/` 下交付两个平台的正式 bundle，采用 `.pkl.xz` 无损压缩，加载器直接读取；原始导出 `.pkl` 也继续支持。融合代码会从当前 `op_shapes.csv` 反推 DLRM 静态配置，调用 CPU 主线的 `full_graph_76` 静态推理，并严格校验 `node_idx/node_name/op_type` 与 E2E 图对齐。bundle 的生成、命名和放置方式见 `../CPU_model_stable/docs_delivery/USER_GUIDE.md`，NPU artifact 的口径见 `../npu_modeling/docs/USER_GUIDE.md`。
 
 ```bash
 python -m cpu_npu_e2e.run_fused_e2e \
   --shape-csv ../CPU_model_stable/pipeline_artifacts/source_kunpeng920_dataset3_unseen_arch_embedding_size/case_10_run_1_1/bs1056_nip2000/op_shapes.csv \
-  --cpu-model-bundle ../CPU_model_stable/outputs/<cpu_run>/model_bundles/<cpu_bundle>.pkl \
+  --cpu-model-bundle ../CPU_model_stable/models/s920x20/joint_6d_tuple_source_100_whitebox_family_prior_plus_physics_guarded_rf_v3.pkl.xz \
   --no-cpu-static-fallback \
   --output-dir outputs/strict_cpu_single
 ```
@@ -120,7 +121,7 @@ python -m cpu_npu_e2e.run_fused_e2e \
 ```bash
 python -m cpu_npu_e2e.run_fused_e2e \
   --cases-config configs/e2e_test_cases.yaml \
-  --cpu-model-bundle ../CPU_model_stable/outputs/<cpu_run>/model_bundles/<cpu_bundle>.pkl \
+  --cpu-model-bundle ../CPU_model_stable/models/s920x20/joint_6d_tuple_source_100_whitebox_family_prior_plus_physics_guarded_rf_v3.pkl.xz \
   --no-cpu-static-fallback \
   --output-dir outputs/e2e_cases_strict_cpu
 ```

@@ -38,14 +38,14 @@ python -m cpu_npu_e2e.run_fused_e2e \
   --output-dir outputs/with_cpu_predictions
 ```
 
-推荐的严格 CPU 接入口是 `CPU_model_stable` 导出的 `model_bundles/*.pkl`：
+仓库在 `CPU_model_stable/models/` 下包含两个平台的正式 CPU bundle（无损压缩为 `.pkl.xz`，推理时直接读取）：
 
 ```bash
 python -m cpu_npu_e2e.run_fused_e2e \
   --cases-config configs/e2e_test_cases.yaml \
-  --cpu-model-bundle ../CPU_model_stable/outputs/<cpu_run>/model_bundles/<cpu_bundle>.pkl \
+  --cpu-model-bundle ../CPU_model_stable/models/s920x20/joint_6d_tuple_source_100_whitebox_family_prior_plus_physics_guarded_rf_v3.pkl.xz \
   --no-cpu-static-fallback \
   --output-dir outputs/e2e_cases_strict_cpu
 ```
 
-CPU bundle 的生成和放置方式见 `../CPU_model_stable/docs_delivery/USER_GUIDE.md`；NPU artifact 口径见 `../npu_modeling/docs/USER_GUIDE.md`。验收方应把严格模式需要的 bundle 放在 `../CPU_model_stable/outputs/.../model_bundles/` 下，再使用上面的相对路径传入。
+CPU bundle 清单、SHA256 和两个平台的选择方式见 `../CPU_model_stable/models/README.md`；重新训练说明见 CPU 使用指南。NPU artifact 口径见 `../npu_modeling/docs/USER_GUIDE.md`。原始 `.pkl` 仍可通过同一参数使用。

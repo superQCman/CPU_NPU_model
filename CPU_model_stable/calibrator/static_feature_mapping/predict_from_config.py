@@ -1,9 +1,13 @@
 from __future__ import annotations
 
 import argparse
+from contextlib import ExitStack
 import json
+import lzma
 import pickle
+import shutil
 import sys
+import tempfile
 import warnings
 from pathlib import Path
 from typing import Any
@@ -57,7 +61,7 @@ def _parse_args() -> argparse.Namespace:
             "trained whitebox route inference."
         ),
     )
-    parser.add_argument("--model-bundle", default="", help="Pickle bundle exported by calibrator/run.py --export-model-bundles.")
+    parser.add_argument("--model-bundle", default="", help="Exported pickle bundle (.pkl), XZ bundle (.pkl.xz), or split XZ manifest (.pkl.xz.parts.json).")
     parser.add_argument("--train-root", default="", help="Legacy mode: split root containing train.csv for on-the-fly fitting.")
     parser.add_argument("--hw-config", default="", help="Legacy mode: whitebox hardware YAML for on-the-fly fitting.")
     parser.add_argument("--route", default=WHITEBOX_PHYSICS_GUARDED_RF_ROUTE, choices=SUPPORTED_ROUTES)
@@ -105,7 +109,24 @@ def _fit_bundle(route: str, train_root: Path, hw_config: Path, policy: str) -> d
 def _load_model_bundle(path: Path) -> dict[str, Any]:
     if not path.exists():
         raise FileNotFoundError(f"model bundle not found: {path}")
-    with path.open("rb") as handle:
+    with ExitStack() as stack:
+        if path.name.endswith(".xz.parts.json"):
+            manifest = json.loads(path.read_text(encoding="utf-8"))
+            if manifest.get("format") != "xz_parts_v1" or not manifest.get("parts"):
+                raise ValueError(f"invalid split XZ model manifest: {path}")
+            compressed = stack.enter_context(tempfile.TemporaryFile())
+            for part in manifest["parts"]:
+                filename = part["filename"]
+                if Path(filename).name != filename:
+                    raise ValueError(f"model part must be a sibling file: {filename}")
+                with path.with_name(filename).open("rb") as source:
+                    shutil.copyfileobj(source, compressed)
+            compressed.seek(0)
+            handle = stack.enter_context(lzma.open(compressed, "rb"))
+        elif path.suffix == ".xz":
+            handle = stack.enter_context(lzma.open(path, "rb"))
+        else:
+            handle = stack.enter_context(path.open("rb"))
         bundle = pickle.load(handle)
     if not isinstance(bundle, dict):
         raise TypeError(f"model bundle must contain a dict, got {type(bundle).__name__}")

@@ -30,12 +30,12 @@ python -m cpu_npu_e2e.run_fused_e2e \
   --output-dir outputs/e2e_cases
 ```
 
-严格 CPU bundle 模式需要先按 `CPU_model_stable/docs_delivery/USER_GUIDE.md` 生成或放置项目内 bundle，再传入相对路径：
+仓库已包含两个平台的正式 CPU bundle，见 [CPU 模型清单](CPU_model_stable/models/README.md)。严格模式直接传入项目内模型：
 
 ```bash
 python -m cpu_npu_e2e.run_fused_e2e \
   --cases-config configs/e2e_test_cases.yaml \
-  --cpu-model-bundle ../CPU_model_stable/outputs/<cpu_run>/model_bundles/<cpu_bundle>.pkl \
+  --cpu-model-bundle ../CPU_model_stable/models/s920x20/joint_6d_tuple_source_100_whitebox_family_prior_plus_physics_guarded_rf_v3.pkl.xz \
   --no-cpu-static-fallback \
   --output-dir outputs/e2e_cases_strict_cpu
 ```

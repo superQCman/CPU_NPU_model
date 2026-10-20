@@ -43,6 +43,7 @@ whitebox_family_prior_plus_physics_guarded_rf_v3
 | `bin/` | 数据生成、ONNX 生成、case job、split 构建和 smoke validation 脚本 |
 | `data/` | 当前实验数据、portable 数据和 split 数据 |
 | `outputs/` | 训练结果、评估指标、bundle、趋势图和后处理产物 |
+| `models/` | 已提交的两个平台正式 CPU bundle（`.pkl.xz`）、SHA256 清单和一致性验证记录 |
 | `env/` | Python 依赖和环境检查 |
 | `docs_delivery/` | 正式交付文档 |
 | `docs/` | 原始过程文档、实验说明和历史记录 |
@@ -85,6 +86,8 @@ outputs/cache_residency_worker_share_v3_full_kunpeng920_20260505
 | `pipeline_artifact_index_audit.csv` | shape/timeline artifact 完整性审计 |
 
 训练后静态配置推理、批量推理耗时、趋势图复现和成本优化入口见 [USER_GUIDE.md](docs_delivery/USER_GUIDE.md)。
+
+直接使用已训练模型时，见 [models/README.md](models/README.md)。模型无需重新训练或手动解压，静态推理和 CPU/NPU 融合入口均支持 `.pkl.xz`；`outputs/` 继续保存本机训练产物并被 Git 忽略。
 
 ## 结果边界
 

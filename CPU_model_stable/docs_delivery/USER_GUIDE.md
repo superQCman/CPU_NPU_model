@@ -2,6 +2,20 @@
 
 本指南面向交付使用，覆盖环境准备、数据绑定、完整链路复现、训练评估、训练后静态配置推理、图表复现、few-shot 泛化和成本约束硬件搜索。
 
+仓库已在 `models/s920x20/`（Device_2）和 `models/kunpeng920/`（Device_1）交付正式训练 bundle。文件为原始 `.pkl` 的无损 XZ 压缩版，`--model-bundle` 可直接读取 `.pkl.xz`，无需重新训练；清单和 SHA256 见 [模型说明](../models/README.md)。本指南中的 `outputs/.../model_bundles/*.pkl` 路径用于重新训练的输出。
+
+从 `CPU_model_stable/` 直接运行已训练模型：
+
+```bash
+python calibrator/static_feature_mapping/predict_from_config.py \
+  --model-bundle models/s920x20/joint_6d_tuple_source_100_whitebox_family_prior_plus_physics_guarded_rf_v3.pkl.xz \
+  --batch-size 1024 --num-indices-per-lookup 1000 \
+  --arch-embedding-size 25600 --arch-mlp-bot 400-300-200 \
+  --inter-threads 1 --num-threads 3 --out-dir outputs/pretrained_static_inference
+```
+
+Device_1 使用 `models/kunpeng920/joint_6d_tuple_source_100_whitebox_family_prior_plus_physics_guarded_rf_v3.pkl.xz.parts.json`。该文件是分片清单，加载器自动读取同目录下的压缩分片，详见模型说明。
+
 ## 1. 交付范围
 
 当前项目用于基于 CPU 硬件参数和 DLRM-like 软件负载信息预测：

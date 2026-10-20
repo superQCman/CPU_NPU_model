@@ -4,16 +4,17 @@ import json
 from pathlib import Path
 
 import pandas as pd
+import pytest
 
 from cpu_npu_e2e.fusion import run_fusion, run_fusion_cases
 
 
 ROOT = Path(__file__).resolve().parents[1]
 DELIVERY_ROOT = ROOT.parent
-CPU_MODEL_BUNDLE = Path(
-    "/data/qc/dlrm/CPU_model_stable/outputs_2/outputs/cache_residency_worker_share_v3_full_s920x20_20260505/"
-    "model_bundles/joint_6d_tuple_source_100_whitebox_family_prior_plus_physics_guarded_rf_v3.pkl"
-)
+def _cpu_model_bundle(hardware: str) -> Path:
+    root = DELIVERY_ROOT / "CPU_model_stable"
+    manifest = json.loads((root / "models/manifest.json").read_text())
+    return root / next(model["path"] for model in manifest["models"] if model["hardware"] == hardware)
 
 
 def test_e2e_smoke_writes_expected_outputs(tmp_path: Path) -> None:
@@ -39,7 +40,8 @@ def test_e2e_smoke_writes_expected_outputs(tmp_path: Path) -> None:
     assert payload["cpu_static_fallback_used"] is True
 
 
-def test_e2e_with_cpu_model_bundle_disables_static_fallback(tmp_path: Path) -> None:
+@pytest.mark.parametrize("hardware", ["s920x20", "kunpeng920"])
+def test_e2e_with_cpu_model_bundle_disables_static_fallback(tmp_path: Path, hardware: str) -> None:
     shape_csv = (
         DELIVERY_ROOT
         / "CPU_model_stable"
@@ -52,7 +54,7 @@ def test_e2e_with_cpu_model_bundle_disables_static_fallback(tmp_path: Path) -> N
         routing_path=ROOT / "configs/cpu_npu_op_routing.yaml",
         output_dir=tmp_path,
         shape_csv=shape_csv,
-        cpu_model_bundle=CPU_MODEL_BUNDLE,
+        cpu_model_bundle=_cpu_model_bundle(hardware),
         allow_cpu_static_fallback=False,
     )
     assert summary["cpu_static_fallback_used"] is False

@@ -11,9 +11,9 @@ from cpu_npu_e2e.shapes import build_graph, load_op_shapes
 
 ROOT = Path(__file__).resolve().parents[1]
 DELIVERY_ROOT = ROOT.parent
-CPU_MODEL_BUNDLE = Path(
-    "/data/qc/dlrm/CPU_model_stable/outputs_2/outputs/cache_residency_worker_share_v3_full_s920x20_20260505/"
-    "model_bundles/joint_6d_tuple_source_100_whitebox_family_prior_plus_physics_guarded_rf_v3.pkl"
+CPU_MODEL_BUNDLE = (
+    DELIVERY_ROOT / "CPU_model_stable/models/s920x20"
+    / "joint_6d_tuple_source_100_whitebox_family_prior_plus_physics_guarded_rf_v3.pkl.xz"
 )
 
 

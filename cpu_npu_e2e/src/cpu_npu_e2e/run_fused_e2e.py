@@ -17,7 +17,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--shape-csv", type=Path, default=None, help="Optional explicit op_shapes.csv. Defaults to the first CPU pipeline artifact.")
     parser.add_argument("--cases-config", type=Path, default=None, help="Optional YAML file with multiple E2E shape cases to run and aggregate.")
     parser.add_argument("--cpu-predictions", type=Path, default=None, help="Optional CPU prediction CSV with op_idx/row_uid and pred_us-like column.")
-    parser.add_argument("--cpu-model-bundle", type=Path, default=None, help="Optional CPU_model_stable model_bundles/*.pkl used for formal full_graph_76 CPU inference.")
+    parser.add_argument("--cpu-model-bundle", type=Path, default=None, help="Optional CPU_model_stable bundle (.pkl, .pkl.xz, or .pkl.xz.parts.json) for formal full_graph_76 CPU inference.")
     parser.add_argument("--cpu-model-num-threads", type=int, default=None, help="Override CPU static model num_threads. Defaults to parsing case_<id>_run_<num_threads>_<inter_threads> from shape path.")
     parser.add_argument("--cpu-model-inter-threads", type=int, default=None, help="Override CPU static model inter_threads. Defaults to parsing case_<id>_run_<num_threads>_<inter_threads> from shape path.")
     parser.add_argument("--cpu-slots", type=int, default=1)
