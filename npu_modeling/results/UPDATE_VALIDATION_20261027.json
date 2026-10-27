@@ -1,0 +1,144 @@
+{
+  "date": "2026-10-27",
+  "source_archive_sha256": "b2d78a2fb7207730cf648c5adfdd2c7505ed29bfa9d3d1e362638372b76008a4",
+  "model_sha256": "712160a20e6d2e69c973369e89f98217a61b3dad548ccf361c2d620f47f12b21",
+  "model_weights_unchanged": true,
+  "update_scope": "New prediction timing benchmark, operator error chart, dataset/split documentation, gzip model paths, and reporting compatibility fixes.",
+  "environment": {
+    "python": "3.13.5",
+    "scikit_learn": "1.8.0"
+  },
+  "holdout_replay": {
+    "status": "passed",
+    "holdout_rows": 1734,
+    "maximum_prediction_difference_us": 9.094947017729282e-13,
+    "metrics": {
+      "sample_count": 1734,
+      "mae_us": 2.8820570412819952,
+      "mape_1us_floor_percent": 8.190859306244734,
+      "wmape_percent": 10.331179321592684,
+      "p50_1us_floor_percent": 5.081971782135369,
+      "p90_1us_floor_percent": 17.212121212121197,
+      "p95_1us_floor_percent": 24.992373112134203,
+      "max_1us_floor_percent": 173.52947401841433
+    },
+    "metric_differences_from_saved": {
+      "sample_count": 0.0,
+      "mae_us": 2.819953159871602e-10,
+      "mape_1us_floor_percent": 2.447340108346907e-10,
+      "wmape_percent": 1.592683318563104e-09,
+      "p50_1us_floor_percent": 1.3536904930333549e-10,
+      "p90_1us_floor_percent": 2.1211974399193423e-09
+    },
+    "prediction_tolerance": {
+      "relative": 1e-12,
+      "absolute_us": 1e-09
+    },
+    "metric_tolerance": {
+      "relative": 1e-09,
+      "absolute": 1e-07
+    }
+  },
+  "local_timing_benchmark": {
+    "model": "/data/qc/CPU_NPU/npu_modeling/results/physical_memory_models.joblib.gz",
+    "input": "/data/qc/CPU_NPU/npu_modeling/results/physical_memory_predictions.csv",
+    "input_scope": "stable_holdout_rows",
+    "rows": 1734,
+    "runs_measured": 3,
+    "aggregation": "median",
+    "load_sec": 1.6527432957664132,
+    "feature_build_sec": 0.4503287859261036,
+    "predict_sec": 0.4448203705251217,
+    "feature_build_and_predict_sec": 0.8850340573117137,
+    "total_sec": 2.66839515324682,
+    "mean_pred_compute_us": 26.516895478406646,
+    "runs": [
+      {
+        "load_sec": 1.6527432957664132,
+        "feature_build_sec": 0.4503287859261036,
+        "predict_sec": 0.5653230715543032,
+        "feature_build_and_predict_sec": 1.0156518574804068,
+        "total_sec": 2.66839515324682,
+        "mean_pred_compute_us": 26.516895478406642
+      },
+      {
+        "load_sec": 1.8171918531879783,
+        "feature_build_sec": 0.440213686786592,
+        "predict_sec": 0.4448203705251217,
+        "feature_build_and_predict_sec": 0.8850340573117137,
+        "total_sec": 2.702225910499692,
+        "mean_pred_compute_us": 26.516895478406646
+      },
+      {
+        "load_sec": 1.6085959365591407,
+        "feature_build_sec": 0.4514698712155223,
+        "predict_sec": 0.43260489497333765,
+        "feature_build_and_predict_sec": 0.8840747661888599,
+        "total_sec": 2.4926707027480006,
+        "mean_pred_compute_us": 26.516895478406646
+      }
+    ]
+  },
+  "test_results": {
+    "npu_modeling/tests/test_reporting.py": {
+      "passed": 2
+    },
+    "cpu_npu_e2e/tests": {
+      "passed": 11
+    }
+  },
+  "full_dlrm_validation": {
+    "status": "passed",
+    "profiled_cases": 1407,
+    "execution_backend": "sequential (same functions and weights; avoids per-case thread-pool overhead)",
+    "relative_tolerance": 1e-09,
+    "absolute_tolerance": 1e-07,
+    "compared_tables": [
+      {
+        "file": "dlrm_case_summary.csv",
+        "rows": 1407,
+        "maximum_numeric_difference": 5.684341886080802e-14
+      },
+      {
+        "file": "dlrm_invocation_predictions.csv",
+        "rows": 16884,
+        "maximum_numeric_difference": 1.4210854715202004e-14
+      },
+      {
+        "file": "dlrm_by_op_summary.csv",
+        "rows": 5,
+        "maximum_numeric_difference": 0.0
+      },
+      {
+        "file": "dlrm_overall_metrics.csv",
+        "rows": 3,
+        "maximum_numeric_difference": 0.0
+      }
+    ],
+    "metrics": [
+      {
+        "metric": "modeled_sum_ape_percent",
+        "count": 1407,
+        "mean": 11.512730658620514,
+        "p50": 10.569208996560892,
+        "p90": 22.967801801079805
+      },
+      {
+        "metric": "npu_compute_replace_modeled_ape_percent",
+        "count": 1407,
+        "mean": 6.756906608400668,
+        "p50": 6.250266752027383,
+        "p90": 13.49398173788954
+      },
+      {
+        "metric": "stage_replace_modeled_ape_percent",
+        "count": 1407,
+        "mean": 0.0004418695911693,
+        "p50": 0.000367074732116,
+        "p90": 0.0008857909318426
+      }
+    ]
+  },
+  "status": "passed",
+  "notes": "The supplied timing report is retained unchanged. local_timing_benchmark is a separate measurement on this host. Model weights and training data were not changed or refitted."
+}

@@ -405,9 +405,12 @@ def align_columns(frame, columns):
 
 def write_report(out_dir, summary, overall, family_df, op_df, residual_df):
     summary_cols = [
+        "raw_rows",
         "stable_rows",
+        "base_train_rows",
         "train_rows",
         "test_rows",
+        "operator_type_count",
         "model_count",
         "strategy",
         "mape_target_percent",
@@ -445,11 +448,35 @@ def write_report(out_dir, summary, overall, family_df, op_df, residual_df):
     summary_df = pd.DataFrame([summary])[[c for c in summary_cols if c in summary]]
     overall_df = pd.DataFrame([overall])[[c for c in metric_cols if c in overall]]
     family_report = family_df[[c for c in family_cols if c in family_df.columns]].copy()
+    requested_ops = [
+        "BatchMatMulV2", "Cast", "ConcatD", "Index", "MatMulV2", "MemSet",
+        "PadV3", "Relu", "Sigmoid", "Transpose",
+    ]
+    operator_report = op_df[op_df["op_type"].isin(requested_ops)][["op_type", "mape_1us_floor_percent"]].copy()
+    operator_report = operator_report.set_index("op_type")
+    available_ops = [op for op in requested_ops if op in operator_report.index]
+    operator_report = operator_report.loc[available_ops].reset_index()
+    operator_report.columns = ["算子名称", "算子平均误差（MAPE@1us-floor，%）"]
+    scope_rows = [
+        ("Raw structured rows", summary.get("raw_rows")),
+        ("Stable rows after aggregation", summary.get("stable_rows")),
+        ("Base training rows before train-only supplements", summary.get("base_train_rows")),
+        ("Final training rows including train-only supplements", summary.get("train_rows")),
+        ("Stable holdout rows", summary.get("test_rows")),
+        ("Covered operator types", summary.get("operator_type_count")),
+        ("Compact model groups", summary.get("models_total")),
+    ]
+    scope_df = pd.DataFrame(scope_rows, columns=["Item", "Value"])
     lines = [
         "# NPU Physical Memory Model Report",
         "",
         "## Summary",
         summary_df.to_markdown(index=False),
+        "",
+        "## Dataset and Validation Scope",
+        scope_df.to_markdown(index=False),
+        "",
+        "The delivery first aggregates repeated model-visible feature rows with a median target, then splits the stable rows 80/20 with stratification by `op_type`. Train-only supplements are appended only after this split. Therefore, this delivery does not use an operator-type-plus-static-parameter group split.",
         "",
         "## Acceptance Metrics",
         overall_df.to_markdown(index=False),
@@ -460,12 +487,36 @@ def write_report(out_dir, summary, overall, family_df, op_df, residual_df):
         "## Metrics By Model Group",
         family_report.to_markdown(index=False),
         "",
+        "## Average Error By Operator",
+        "Values are the stable holdout `MAPE@1us-floor` for the requested operator names present in this physical-memory delivery.",
+        "",
+        operator_report.to_markdown(index=False),
+        "",
+        "![NPU算子平均误差](physical_memory_operator_error.svg)",
+        "",
         "## Notes",
         "- Uses stable-label aggregation before train/test split.",
         "- Accepted strategy uses one model per final model group.",
         "- Hierarchical memory features model L0 as capacity/reuse pressure and L1/L2/HBM as bandwidth lower-bound terms.",
         "- Operator-level diagnostics are retained as CSV artifacts for engineering analysis but are not part of the delivery acceptance report.",
     ]
+    timing_path = out_dir / "prediction_time_report.json"
+    if timing_path.exists():
+        timing = json.loads(timing_path.read_text(encoding="utf-8"))
+        timing_lines = [
+            "## Prediction Timing",
+            f"Timing was measured on {timing['rows']} delivered stable holdout rows over {timing['runs_measured']} runs; values below are medians and exclude CSV input loading.",
+            "",
+            "| 指标 | 数值（秒） |",
+            "|:---|---:|",
+            f"| 模型加载耗时 | {timing['load_sec']:.4f} |",
+            f"| 静态特征构建和批量预测耗时 | {timing['feature_build_and_predict_sec']:.4f} |",
+            f"| 总耗时 | {timing['total_sec']:.4f} |",
+            "",
+            "Machine-readable results are retained in `prediction_time_report.json`.",
+            "",
+        ]
+        lines = lines[:-6] + timing_lines + lines[-6:]
     (out_dir / "PHYSICAL_MEMORY_MODEL_REPORT.md").write_text("\n".join(lines) + "\n", encoding="utf-8")
 
 
@@ -554,12 +605,14 @@ def train_physical_family_strategy(df, out_dir, args, hw, train_extra_df=None):
 
     residual_df = pd.DataFrame(expert_rows) if expert_rows else pd.DataFrame([{"strategy": args.grouping, "status": "not_used", "reason": "one model per final model group"}])
     residual_df.to_csv(out_dir / "physical_memory_residual_experts.csv", index=False)
-    joblib.dump({"strategy": args.grouping, "models": artifacts, "physical_family_by_op": PHYSICAL_FAMILY_BY_OP, "strict_compact_group_by_op": STRICT_COMPACT_GROUP_BY_OP, "hardware": hw}, out_dir / "physical_memory_models.joblib")
+    joblib.dump({"strategy": args.grouping, "models": artifacts, "physical_family_by_op": PHYSICAL_FAMILY_BY_OP, "strict_compact_group_by_op": STRICT_COMPACT_GROUP_BY_OP, "hardware": hw}, out_dir / "physical_memory_models.joblib.gz")
     summary = {
         "raw_rows": int(args.raw_rows),
         "stable_rows": int(len(df)),
+        "base_train_rows": int(len(df) - len(test)),
         "train_rows": int(len(train)),
         "test_rows": int(len(test)),
+        "operator_type_count": int(df["op_type"].nunique()),
         "model_count": int(len(artifacts) + sum(len(v.get("op_experts", {})) for v in artifacts.values())),
         "strategy": args.grouping,
         "expert_ops_requested": ";".join(sorted(expert_ops)),
@@ -703,13 +756,15 @@ def main():
         "residual_group_by_family": RESIDUAL_GROUP_BY_FAMILY,
         "hardware": hw,
     }
-    joblib.dump(artifacts, out_dir / "physical_memory_models.joblib")
+    joblib.dump(artifacts, out_dir / "physical_memory_models.joblib.gz")
 
     summary = {
         "raw_rows": int(raw_rows),
         "stable_rows": int(len(df)),
+        "base_train_rows": int(len(train)),
         "train_rows": int(len(train)),
         "test_rows": int(len(test)),
+        "operator_type_count": int(df["op_type"].nunique()),
         "model_count": 1 + len(residual_artifacts),
         "global_model_choice": global_choice,
         "mape_target_percent": float(args.mape_target),

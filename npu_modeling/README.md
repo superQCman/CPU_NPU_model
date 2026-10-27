@@ -14,11 +14,14 @@
 
 | 指标 | 数值 |
 |---|---:|
-| Stable validation rows | 8666 |
+| Raw structured rows | 10510 |
+| Stable rows after aggregation | 8666 |
 | Holdout rows | 1734 |
-| Train rows including train-only supplements | 10171 |
 | Overall MAPE@1us-floor | 8.1909% |
 | Overall p90@1us-floor | 17.2121% |
+| Model loading time | 1.7504 s |
+| Static feature construction and batch prediction time | 1.0806 s |
+| Total inference benchmark time | 2.8310 s |
 
 最终模型组为 `DataDependent`、`MovementSelectionWindow`、`StreamingReduction` 和 `StructuredComputeMemory`。
 
@@ -45,6 +48,12 @@ python code/train_physical_memory_models.py \
   --seed 20260505
 ```
 
+训练后可复现预测耗时基准：
+
+```bash
+python code/benchmark_prediction_time.py --repeats 3
+```
+
 
 
 ## 关键文件
@@ -53,13 +62,16 @@ python code/train_physical_memory_models.py \
 |---|---|
 | `code/train_physical_memory_models.py` | 模型训练、特征构造、验证、指标输出和 artifact 导出脚本。 |
 | `code/build_semantic_operator_dataset.py` | 交付内置语义特征构建器，用于 supplemental core labels 和 DLRM 验证。 |
+| `code/benchmark_prediction_time.py` | 模型加载、静态特征构建和批量预测耗时基准脚本。 |
 | `input_data/semantic_operator_dataset.csv` | 交付内置训练数据集。 |
 | `input_data/dlrm_profiles/` | DLRM 验证使用的轻量级 profile 输入。 |
 | `models/hardware_descriptor.json` | L0/L1/L2/HBM 参数和计算峰值的硬件描述文件。 |
-| `results/physical_memory_models.joblib` | 最终模型 artifact。 |
+| `results/physical_memory_models.joblib.gz` | 最终模型 artifact。 |
 | `results/physical_memory_overall_metrics.csv` | 整体验收指标。 |
 | `results/physical_memory_metrics_by_family.csv` | 最终模型组指标。 |
 | `results/physical_memory_metrics_by_op.csv` | 按算子统计的工程诊断指标，不属于交付验收报告。 |
+| `results/prediction_time_report.json` | 机器可读的预测耗时基准结果。 |
+| `results/PREDICTION_TIME_REPORT.md` | 预测耗时基准报告。 |
 | `results/dlrm_end_to_end/` | 多配置 DLRM NPU compute replacement 验证结果。 |
 | `results/train_supplements/` | 仅用于训练侧补充的数据和 targeted cases。 |
 | `results/PHYSICAL_MEMORY_MODEL_REPORT.md` | 交付验收报告。 |

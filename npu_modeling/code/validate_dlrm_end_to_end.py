@@ -176,7 +176,7 @@ def display_path(path: Path) -> str:
 def main():
     parser = argparse.ArgumentParser(description="Validate physical-memory model on multi-config DLRM profiles")
     parser.add_argument("--results-dir", type=Path, default=DELIVERY_ROOT / "input_data/dlrm_profiles/results_20260426_135144")
-    parser.add_argument("--model-artifact", type=Path, default=DELIVERY_ROOT / "results/physical_memory_models.joblib")
+    parser.add_argument("--model-artifact", type=Path, default=DELIVERY_ROOT / "results/physical_memory_models.joblib.gz")
     parser.add_argument("--hardware", type=Path, default=DELIVERY_ROOT / "models/hardware_descriptor.json")
     parser.add_argument("--output-dir", type=Path, default=DELIVERY_ROOT / "results/dlrm_end_to_end")
     args = parser.parse_args()

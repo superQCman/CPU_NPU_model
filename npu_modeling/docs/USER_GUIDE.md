@@ -10,7 +10,7 @@
 
 | 路径 | 内容说明 |
 |---|---|
-| `code/` | 可执行脚本，包括模型训练、targeted case 生成、DLRM 端到端验证。 |
+| `code/` | 可执行脚本，包括模型训练、targeted case 生成、预测耗时基准、DLRM 端到端验证。 |
 | `input_data/` | 交付内置输入数据，包括训练数据集和轻量级 DLRM profile 输入。 |
 | `models/` | 本次建模使用的 NPU 硬件描述文件。 |
 | `results/` | 最终模型产物、预测明细、指标、报告、图表和 DLRM 验证结果。 |
@@ -63,9 +63,23 @@ Python 依赖如下：
 | `l2_bandwidth_bytes_per_s` | `1.0e12` | L2 带宽下界项。 |
 | `memory_bandwidth_bytes_per_s` | `1.0e12` | HBM 带宽下界项。 |
 
-如果目标硬件发生变化，应先更新该 JSON 文件，再重新训练模型。不建议在硬件参数已变更的情况下直接复用已有的 `physical_memory_models.joblib`，除非明确是在做消融实验或敏感性分析。
+如果目标硬件发生变化，应先更新该 JSON 文件，再重新训练模型。不建议在硬件参数已变更的情况下直接复用已有的 `physical_memory_models.joblib.gz`，除非明确是在做消融实验或敏感性分析。
 
 ## 6. 模型训练脚本
+
+### 6.0 数据与验证口径
+
+| 项目 | 数值 |
+|---|---:|
+| 原始结构化记录 | 10510 |
+| stable 聚合后记录 | 8666 |
+| 追加 train-only supplements 前的基础训练记录 | 6932 |
+| 追加 train-only supplements 后的训练记录 | 10171 |
+| stable holdout 记录 | 1734 |
+| 覆盖算子类型 | 30 |
+| compact model groups | 4 |
+
+交付流程先对模型可见特征完全相同的重复样本取 target 中位数并去重，再按 `op_type` 分层执行 80/20 train/test split；train-only supplements 在 split 后仅追加到训练侧。当前交付不是按“算子类型 + 静态参数组合”做组级划分。
 
 ### 6.1 脚本目标
 
@@ -122,9 +136,27 @@ python code/train_physical_memory_models.py \
 | `physical_memory_metrics_by_family.csv` | 最终模型组指标和验收标记。 |
 | `physical_memory_metrics_by_op.csv` | 按算子类型统计的工程诊断指标。该文件用于内部分析，不放入交付验收报告。 |
 | `physical_memory_residual_experts.csv` | residual/expert 使用情况。交付模型不使用 residual expert。 |
-| `physical_memory_models.joblib` | 训练后的模型 artifact。 |
+| `physical_memory_models.joblib.gz` | 训练后的模型 artifact。 |
 | `run_summary.json` | 机器可读的运行摘要，包括模型数量和验收状态。 |
 | `PHYSICAL_MEMORY_MODEL_REPORT.md` | 自动生成的实验报告。 |
+
+### 6.5 预测耗时基准
+
+训练或复现完成后，从交付目录根路径执行：
+
+```bash
+python code/benchmark_prediction_time.py --repeats 3
+```
+
+脚本在交付的 1734 条 stable holdout 样本上测量 artifact 加载、静态特征构建和批量预测耗时，重复三次后取中位数；CSV 输入读取时间不计入。当前交付结果为：
+
+| 指标 | 数值 |
+|---|---:|
+| 模型加载耗时 | 1.7504 秒 |
+| 静态特征构建和批量预测耗时 | 1.0806 秒 |
+| 总耗时 | 2.8310 秒 |
+
+结果输出到 `results/prediction_time_report.json` 和 `results/PREDICTION_TIME_REPORT.md`。
 
 ## 7. DLRM 端到端验证脚本
 
@@ -182,7 +214,7 @@ python code/validate_dlrm_end_to_end.py
 
 训练后的模型 artifact 路径为：
 
-`results/physical_memory_models.joblib`
+`results/physical_memory_models.joblib.gz`
 
 artifact 包含：
 
@@ -211,6 +243,7 @@ artifact 包含：
 1. 确认 `models/hardware_descriptor.json` 与目标 NPU 假设一致。
 2. 使用最终命令运行 `train_physical_memory_models.py`。
 3. 检查 `run_summary.json` 和 `physical_memory_metrics_by_family.csv`，确认验收标记为通过。
+4. 运行 `benchmark_prediction_time.py`，刷新预测耗时结果。
 5. 运行 `validate_dlrm_end_to_end.py`，刷新 DLRM 验证结果。
-6. 审阅 `PHYSICAL_MEMORY_MODEL_REPORT.md` 和 `results/dlrm_end_to_end/DLRM_END_TO_END_REPORT.md`。
+6. 审阅 `PHYSICAL_MEMORY_MODEL_REPORT.md`、`PREDICTION_TIME_REPORT.md` 和 `results/dlrm_end_to_end/DLRM_END_TO_END_REPORT.md`。
 

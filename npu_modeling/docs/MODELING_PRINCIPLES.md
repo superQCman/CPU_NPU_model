@@ -269,20 +269,18 @@ APE@1us-floor = abs(pred - target) / max(abs(target), 1.0) * 100
 |---|---:|
 | Stable validation rows | `8666` |
 | Holdout rows | `1734` |
-| Train rows including train-only supplements | `10171` |
 | Model count | `4` |
 | Overall MAPE@1us-floor | `8.1909%` |
 | Overall p90@1us-floor | `17.2121%` |
-| Per-model target | `4/4` models pass |
 
 ### 9.2 每个模型组结果
 
-| 模型组 | MAPE@1us-floor | p90@1us-floor |
-|---|---:|---:|
-| `DataDependent` | `3.4359%` | `3.7257%` |
-| `MovementSelectionWindow` | `7.1184%` | `16.2852%` |
-| `StreamingReduction` | `7.9468%` | `16.0963%` |
-| `StructuredComputeMemory` | `9.1546%` | `19.2637%` |
+| 模型组 | MAPE@1us-floor |
+|---|---:|
+| `DataDependent` | `3.4359%` |
+| `MovementSelectionWindow` | `7.1184%` |
+| `StreamingReduction` | `7.9468%` |
+| `StructuredComputeMemory` | `9.1546%` |
 
 ## 10. DLRM 端到端验证
 
